@@ -1,3 +1,4 @@
+import { ThemeToggle } from '@/components/ui/theme-toggle';
 import { ArrowRight, BarChart, CheckCircle, Shield, Zap } from 'lucide-react';
 import Link from 'next/link';
 
@@ -15,28 +16,38 @@ export default function HomePage() {
           </div>
 
           <nav className="hidden md:flex items-center space-x-6">
-            <Link href="/features" className="text-muted-foreground hover:text-foreground transition-colors">
+            <Link
+              href="/features"
+              className="text-muted-foreground hover:text-foreground transition-colors">
               Features
             </Link>
-            <Link href="/pricing" className="text-muted-foreground hover:text-foreground transition-colors">
+            <Link
+              href="/pricing"
+              className="text-muted-foreground hover:text-foreground transition-colors">
               Pricing
             </Link>
-            <Link href="/about" className="text-muted-foreground hover:text-foreground transition-colors">
+            <Link
+              href="/about"
+              className="text-muted-foreground hover:text-foreground transition-colors">
               About
+            </Link>
+            <Link
+              href="/components-demo"
+              className="text-muted-foreground hover:text-foreground transition-colors">
+              Components
             </Link>
           </nav>
 
           <div className="flex items-center space-x-4">
+            <ThemeToggle />
             <Link
               href="/login"
-              className="text-muted-foreground hover:text-foreground transition-colors"
-            >
+              className="text-muted-foreground hover:text-foreground transition-colors">
               Sign In
             </Link>
             <Link
               href="/register"
-              className="bg-primary text-primary-foreground px-4 py-2 rounded-lg hover:bg-primary/90 transition-colors"
-            >
+              className="bg-primary text-primary-foreground px-4 py-2 rounded-lg hover:bg-primary/90 transition-colors">
               Get Started
             </Link>
           </div>
@@ -52,24 +63,21 @@ export default function HomePage() {
           </h1>
 
           <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto leading-relaxed">
-            Create, customize, and deploy intelligent forms with conditional logic,
-            seamless integrations, and powerful analytics. The modern form builder
-            for teams and enterprises.
+            Create, customize, and deploy intelligent forms with conditional logic, seamless
+            integrations, and powerful analytics. The modern form builder for teams and enterprises.
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-12">
             <Link
               href="/register"
-              className="bg-primary text-primary-foreground px-8 py-4 rounded-lg hover:bg-primary/90 transition-all duration-200 flex items-center gap-2 text-lg font-medium shadow-lg hover:shadow-xl"
-            >
+              className="bg-primary text-primary-foreground px-8 py-4 rounded-lg hover:bg-primary/90 transition-all duration-200 flex items-center gap-2 text-lg font-medium shadow-lg hover:shadow-xl">
               Start Building Free
               <ArrowRight className="w-5 h-5" />
             </Link>
 
             <Link
               href="/demo"
-              className="border border-border text-foreground px-8 py-4 rounded-lg hover:bg-muted transition-all duration-200 flex items-center gap-2 text-lg font-medium"
-            >
+              className="border border-border text-foreground px-8 py-4 rounded-lg hover:bg-muted transition-all duration-200 flex items-center gap-2 text-lg font-medium">
               View Demo
             </Link>
           </div>
@@ -93,8 +101,8 @@ export default function HomePage() {
             </div>
             <h3 className="text-xl font-semibold text-foreground mb-3">Lightning Fast</h3>
             <p className="text-muted-foreground leading-relaxed">
-              Build complex forms in minutes with our intuitive drag-and-drop interface
-              and pre-built components.
+              Build complex forms in minutes with our intuitive drag-and-drop interface and
+              pre-built components.
             </p>
           </div>
 
@@ -104,8 +112,8 @@ export default function HomePage() {
             </div>
             <h3 className="text-xl font-semibold text-foreground mb-3">Enterprise Security</h3>
             <p className="text-muted-foreground leading-relaxed">
-              Bank-level security with encryption, compliance certifications,
-              and advanced access controls.
+              Bank-level security with encryption, compliance certifications, and advanced access
+              controls.
             </p>
           </div>
 
@@ -115,8 +123,8 @@ export default function HomePage() {
             </div>
             <h3 className="text-xl font-semibold text-foreground mb-3">Smart Analytics</h3>
             <p className="text-muted-foreground leading-relaxed">
-              Get deep insights into form performance, user behavior,
-              and conversion optimization opportunities.
+              Get deep insights into form performance, user behavior, and conversion optimization
+              opportunities.
             </p>
           </div>
         </div>
@@ -136,7 +144,7 @@ export default function HomePage() {
               'Custom Styling',
               'API Integrations',
               'Team Collaboration',
-              'Advanced Analytics'
+              'Advanced Analytics',
             ].map((feature) => (
               <div key={feature} className="flex items-center gap-3">
                 <CheckCircle className="w-5 h-5 text-primary flex-shrink-0" />

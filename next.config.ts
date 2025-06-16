@@ -63,8 +63,8 @@ const nextConfig: NextConfig = {
     ignoreDuringBuilds: false,
   },
 
-  // Output configuration for better performance
-  output: 'standalone',
+  // // Output configuration for better performance
+  // output: 'standalone',
 
   // Enable gzip compression
   compress: true,

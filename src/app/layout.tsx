@@ -1,3 +1,4 @@
+import { ThemeProvider } from '@/components/theme-provider';
 import type { Metadata } from 'next';
 import { Inter, JetBrains_Mono } from 'next/font/google';
 import './globals.css';
@@ -79,10 +80,15 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${inter.variable} ${jetbrainsMono.variable}`}>
+    <html
+      lang="en"
+      className={`${inter.variable} ${jetbrainsMono.variable}`}
+      suppressHydrationWarning>
       <body className="font-sans antialiased bg-background text-foreground">
-        {/* Main content */}
-        <main>{children}</main>
+        <ThemeProvider>
+          {/* Main content */}
+          <main>{children}</main>
+        </ThemeProvider>
 
         {/* Global scripts and third-party integrations can be added here */}
       </body>
