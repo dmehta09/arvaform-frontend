@@ -9,18 +9,18 @@
 // HTTP & Request Types
 // ============================================================================
 
-export type HttpMethod = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
+export type HttpMethod = "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
 export type ContentType =
-  | 'application/json'
-  | 'multipart/form-data'
-  | 'application/x-www-form-urlencoded';
+  | "application/json"
+  | "multipart/form-data"
+  | "application/x-www-form-urlencoded";
 
 export interface RequestHeaders {
-  'Content-Type'?: ContentType;
+  "Content-Type"?: ContentType;
   Authorization?: string;
   Accept?: string;
-  'X-Request-ID'?: string;
-  'X-Client-Version'?: string;
+  "X-Request-ID"?: string;
+  "X-Client-Version"?: string;
   [key: string]: string | undefined;
 }
 
@@ -108,7 +108,7 @@ export interface ApiClientConfig {
 
   // Auth configuration
   auth: {
-    tokenStorage: 'localStorage' | 'sessionStorage' | 'memory';
+    tokenStorage: "localStorage" | "sessionStorage" | "memory";
     tokenKey: string;
     refreshTokenKey: string;
     autoRefresh: boolean;
@@ -116,8 +116,12 @@ export interface ApiClientConfig {
 
   // Interceptors
   interceptors: {
-    request: Array<(config: ApiRequestConfig) => ApiRequestConfig | Promise<ApiRequestConfig>>;
-    response: Array<(response: ApiResponse) => ApiResponse | Promise<ApiResponse>>;
+    request: Array<
+      (config: ApiRequestConfig) => ApiRequestConfig | Promise<ApiRequestConfig>
+    >;
+    response: Array<
+      (response: ApiResponse) => ApiResponse | Promise<ApiResponse>
+    >;
     error: Array<(error: ApiError) => Promise<ApiError | never>>;
   };
 
@@ -132,16 +136,16 @@ export interface ApiClientConfig {
 // ============================================================================
 
 export interface AuthEndpoints {
-  login: '/auth/login';
-  register: '/auth/register';
-  refresh: '/auth/refresh';
-  logout: '/auth/logout';
-  logoutAll: '/auth/logout-all';
-  changePassword: '/auth/change-password';
-  forgotPassword: '/auth/forgot-password';
-  resetPassword: '/auth/reset-password';
-  verifyEmail: '/auth/verify-email';
-  resendVerification: '/auth/resend-verification';
+  login: "/auth/login";
+  register: "/auth/register";
+  refresh: "/auth/refresh";
+  logout: "/auth/logout";
+  logoutAll: "/auth/logout-all";
+  changePassword: "/auth/change-password";
+  forgotPassword: "/auth/forgot-password";
+  resetPassword: "/auth/reset-password";
+  verifyEmail: "/auth/verify-email";
+  resendVerification: "/auth/resend-verification";
 }
 
 export interface AuthApiRequests {
@@ -195,7 +199,7 @@ export interface AuthApiResponses {
       lastLoginAt: string | null;
     };
   };
-  register: AuthApiResponses['login'];
+  register: AuthApiResponses["login"];
   refresh: {
     accessToken: string;
     refreshToken: string;
@@ -227,16 +231,16 @@ export interface AuthApiResponses {
 // ============================================================================
 
 export interface UserEndpoints {
-  profile: '/users/profile';
-  user: '/users/:id';
-  userByEmail: '/users/email/:email';
-  deactivate: '/users/deactivate';
-  list: '/users';
-  create: '/users';
-  addRefreshToken: '/users/:id/refresh-tokens';
-  removeRefreshToken: '/users/:id/refresh-tokens';
-  removeAllRefreshTokens: '/users/:id/refresh-tokens/all';
-  validateRefreshToken: '/users/:id/refresh-tokens/validate';
+  profile: "/users/profile";
+  user: "/users/:id";
+  userByEmail: "/users/email/:email";
+  deactivate: "/users/deactivate";
+  list: "/users";
+  create: "/users";
+  addRefreshToken: "/users/:id/refresh-tokens";
+  removeRefreshToken: "/users/:id/refresh-tokens";
+  removeAllRefreshTokens: "/users/:id/refresh-tokens/all";
+  validateRefreshToken: "/users/:id/refresh-tokens/validate";
 }
 
 export interface UserApiRequests {
@@ -270,9 +274,9 @@ export interface UserApiResponses {
     status: string;
     lastLoginAt: string | null;
   };
-  user: UserApiResponses['profile'];
-  list: UserApiResponses['profile'][];
-  create: UserApiResponses['profile'];
+  user: UserApiResponses["profile"];
+  list: UserApiResponses["profile"][];
+  create: UserApiResponses["profile"];
   deactivate: {
     message: string;
   };
@@ -295,17 +299,17 @@ export interface UserApiResponses {
 // ============================================================================
 
 export interface FormEndpoints {
-  list: '/forms';
-  create: '/forms';
-  get: '/forms/:id';
-  update: '/forms/:id';
-  delete: '/forms/:id';
-  duplicate: '/forms/:id/duplicate';
-  publish: '/forms/:id/publish';
-  unpublish: '/forms/:id/unpublish';
-  analytics: '/forms/:id/analytics';
-  submissions: '/forms/:id/submissions';
-  export: '/forms/:id/export';
+  list: "/forms";
+  create: "/forms";
+  get: "/forms/:id";
+  update: "/forms/:id";
+  delete: "/forms/:id";
+  duplicate: "/forms/:id/duplicate";
+  publish: "/forms/:id/publish";
+  unpublish: "/forms/:id/unpublish";
+  analytics: "/forms/:id/analytics";
+  submissions: "/forms/:id/submissions";
+  export: "/forms/:id/export";
 }
 
 export interface FormApiRequests {
@@ -332,7 +336,7 @@ export interface FormApiRequests {
     customDomain?: string;
   };
   export: {
-    format: 'pdf' | 'json';
+    format: "pdf" | "json";
     includeSubmissions?: boolean;
   };
 }
@@ -372,13 +376,13 @@ export interface FormApiResponses {
     createdAt: string;
     updatedAt: string;
   };
-  update: FormApiResponses['get'];
+  update: FormApiResponses["get"];
   delete: {
     message: string;
   };
-  duplicate: FormApiResponses['create'];
+  duplicate: FormApiResponses["create"];
   publish: {
-    form: FormApiResponses['get'];
+    form: FormApiResponses["get"];
     publicUrl: string;
   };
   unpublish: {
@@ -406,15 +410,15 @@ export interface FormApiResponses {
 // ============================================================================
 
 export interface SubmissionEndpoints {
-  list: '/submissions';
-  create: '/submissions';
-  get: '/submissions/:id';
-  update: '/submissions/:id';
-  delete: '/submissions/:id';
-  export: '/submissions/export';
-  analytics: '/submissions/analytics';
-  bulkUpdate: '/submissions/bulk-update';
-  bulkDelete: '/submissions/bulk-delete';
+  list: "/submissions";
+  create: "/submissions";
+  get: "/submissions/:id";
+  update: "/submissions/:id";
+  delete: "/submissions/:id";
+  export: "/submissions/export";
+  analytics: "/submissions/analytics";
+  bulkUpdate: "/submissions/bulk-update";
+  bulkDelete: "/submissions/bulk-delete";
 }
 
 export interface SubmissionApiRequests {
@@ -435,7 +439,7 @@ export interface SubmissionApiRequests {
   };
   export: {
     formId?: string;
-    format: 'csv' | 'excel' | 'json';
+    format: "csv" | "excel" | "json";
     dateRange?: {
       start: string;
       end: string;
@@ -487,7 +491,7 @@ export interface SubmissionApiResponses {
     signatures: unknown[];
     submittedAt: string;
   };
-  update: SubmissionApiResponses['get'];
+  update: SubmissionApiResponses["get"];
   delete: {
     message: string;
   };
@@ -515,9 +519,9 @@ export interface SubmissionApiResponses {
 // ============================================================================
 
 export interface FileUploadEndpoints {
-  upload: '/files/upload';
-  delete: '/files/:id';
-  getSignedUrl: '/files/signed-url';
+  upload: "/files/upload";
+  delete: "/files/:id";
+  getSignedUrl: "/files/signed-url";
 }
 
 export interface FileUploadApiRequests {
@@ -557,7 +561,7 @@ export interface PaginationParams {
   page?: number;
   limit?: number;
   sortBy?: string;
-  sortOrder?: 'asc' | 'desc';
+  sortOrder?: "asc" | "desc";
 }
 
 export interface DateRangeParams {
@@ -616,7 +620,7 @@ export interface CacheConfig {
   enabled: boolean;
   defaultTTL: number; // milliseconds
   maxSize: number; // maximum number of cached items
-  storageType: 'memory' | 'localStorage' | 'sessionStorage';
+  storageType: "memory" | "localStorage" | "sessionStorage";
 }
 
 export interface CacheEntry<T = unknown> {
@@ -659,11 +663,11 @@ export interface WebSocketMessage<T = unknown> {
 }
 
 export interface WebSocketEvents {
-  'form.updated': { formId: string; changes: unknown };
-  'submission.created': { submissionId: string; formId: string };
-  'submission.updated': { submissionId: string; changes: unknown };
-  'user.online': { userId: string };
-  'user.offline': { userId: string };
+  "form.updated": { formId: string; changes: unknown };
+  "submission.created": { submissionId: string; formId: string };
+  "submission.updated": { submissionId: string; changes: unknown };
+  "user.online": { userId: string };
+  "user.offline": { userId: string };
   notification: { type: string; message: string; data?: unknown };
 }
 
@@ -676,15 +680,29 @@ export interface ApiClient {
   config: ApiClientConfig;
 
   // HTTP methods
-  get<T>(url: string, config?: Partial<ApiRequestConfig>): Promise<ApiResponse<T>>;
-  post<T>(url: string, data?: unknown, config?: Partial<ApiRequestConfig>): Promise<ApiResponse<T>>;
-  put<T>(url: string, data?: unknown, config?: Partial<ApiRequestConfig>): Promise<ApiResponse<T>>;
+  get<T>(
+    url: string,
+    config?: Partial<ApiRequestConfig>,
+  ): Promise<ApiResponse<T>>;
+  post<T>(
+    url: string,
+    data?: unknown,
+    config?: Partial<ApiRequestConfig>,
+  ): Promise<ApiResponse<T>>;
+  put<T>(
+    url: string,
+    data?: unknown,
+    config?: Partial<ApiRequestConfig>,
+  ): Promise<ApiResponse<T>>;
   patch<T>(
     url: string,
     data?: unknown,
     config?: Partial<ApiRequestConfig>,
   ): Promise<ApiResponse<T>>;
-  delete<T>(url: string, config?: Partial<ApiRequestConfig>): Promise<ApiResponse<T>>;
+  delete<T>(
+    url: string,
+    config?: Partial<ApiRequestConfig>,
+  ): Promise<ApiResponse<T>>;
 
   // Authentication
   setAuthToken(token: string): void;
@@ -697,9 +715,15 @@ export interface ApiClient {
   buildHeaders(headers?: RequestHeaders): RequestHeaders;
 
   // Interceptors
-  addRequestInterceptor(interceptor: (config: ApiRequestConfig) => ApiRequestConfig): void;
-  addResponseInterceptor(interceptor: (response: ApiResponse) => ApiResponse): void;
-  addErrorInterceptor(interceptor: (error: ApiError) => Promise<ApiError | never>): void;
+  addRequestInterceptor(
+    interceptor: (config: ApiRequestConfig) => ApiRequestConfig,
+  ): void;
+  addResponseInterceptor(
+    interceptor: (response: ApiResponse) => ApiResponse,
+  ): void;
+  addErrorInterceptor(
+    interceptor: (error: ApiError) => Promise<ApiError | never>,
+  ): void;
 
   // Cache
   cache: CacheOperations;
@@ -717,22 +741,24 @@ export interface ApiClient {
 export const isApiError = (obj: unknown): obj is ApiError => {
   return (
     obj !== null &&
-    typeof obj === 'object' &&
-    'message' in obj !== null &&
-    'status' in obj !== null &&
-    typeof (obj as ApiError).message === 'string' &&
-    typeof (obj as ApiError).status === 'number'
+    typeof obj === "object" &&
+    "message" in obj !== null &&
+    "status" in obj !== null &&
+    typeof (obj as ApiError).message === "string" &&
+    typeof (obj as ApiError).status === "number"
   );
 };
 
-export const isPaginatedResponse = <T>(obj: unknown): obj is PaginatedResponse<T> => {
+export const isPaginatedResponse = <T>(
+  obj: unknown,
+): obj is PaginatedResponse<T> => {
   return (
     obj !== null &&
-    typeof obj === 'object' &&
-    'data' in obj !== null &&
-    'pagination' in obj !== null &&
+    typeof obj === "object" &&
+    "data" in obj !== null &&
+    "pagination" in obj !== null &&
     Array.isArray((obj as PaginatedResponse<T>).data) &&
-    typeof (obj as PaginatedResponse<T>).pagination.page === 'number'
+    typeof (obj as PaginatedResponse<T>).pagination.page === "number"
   );
 };
 
@@ -744,17 +770,19 @@ export type ApiEndpoint = keyof (AuthEndpoints &
   UserEndpoints &
   FormEndpoints &
   SubmissionEndpoints);
-export type ApiRequestData<T extends ApiEndpoint> = T extends keyof AuthApiRequests
-  ? AuthApiRequests[T]
-  : T extends keyof UserApiRequests
-    ? UserApiRequests[T]
-    : unknown;
+export type ApiRequestData<T extends ApiEndpoint> =
+  T extends keyof AuthApiRequests
+    ? AuthApiRequests[T]
+    : T extends keyof UserApiRequests
+      ? UserApiRequests[T]
+      : unknown;
 
-export type ApiResponseData<T extends ApiEndpoint> = T extends keyof AuthApiResponses
-  ? AuthApiResponses[T]
-  : T extends keyof UserApiResponses
-    ? UserApiResponses[T]
-    : unknown;
+export type ApiResponseData<T extends ApiEndpoint> =
+  T extends keyof AuthApiResponses
+    ? AuthApiResponses[T]
+    : T extends keyof UserApiResponses
+      ? UserApiResponses[T]
+      : unknown;
 
 // ============================================================================
 // Constants
@@ -777,11 +805,11 @@ export const HTTP_STATUS_CODES = {
 } as const;
 
 export const CONTENT_TYPES = {
-  JSON: 'application/json',
-  FORM_DATA: 'multipart/form-data',
-  URL_ENCODED: 'application/x-www-form-urlencoded',
-  TEXT: 'text/plain',
-  HTML: 'text/html',
+  JSON: "application/json",
+  FORM_DATA: "multipart/form-data",
+  URL_ENCODED: "application/x-www-form-urlencoded",
+  TEXT: "text/plain",
+  HTML: "text/html",
 } as const;
 
 // Note: All types are exported individually above

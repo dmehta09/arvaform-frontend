@@ -1,9 +1,15 @@
-'use client';
+"use client";
 
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import {
   Dialog,
   DialogContent,
@@ -12,16 +18,20 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '@/components/ui/dialog';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { Progress } from '@/components/ui/progress';
-import { Slider } from '@/components/ui/slider';
-import { Switch } from '@/components/ui/switch';
-import { ThemeToggle } from '@/components/ui/theme-toggle';
-import { Mail } from 'lucide-react';
-import { useState } from 'react';
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { Progress } from "@/components/ui/progress";
+import { Slider } from "@/components/ui/slider";
+import { Switch } from "@/components/ui/switch";
+import { ThemeToggle } from "@/components/ui/theme-toggle";
+import { Mail } from "lucide-react";
+import { useState } from "react";
 
 export default function ComponentsDemo() {
   const [progress, setProgress] = useState(33);
@@ -33,7 +43,9 @@ export default function ComponentsDemo() {
       <header className="sticky top-0 z-50 bg-background/80 backdrop-blur-sm border-b border-border">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
-            <h1 className="text-2xl font-bold text-foreground">ShadCN/UI Components Demo</h1>
+            <h1 className="text-2xl font-bold text-foreground">
+              ShadCN/UI Components Demo
+            </h1>
             <div className="flex items-center gap-4">
               <Badge variant="secondary">ArvaForm Design System</Badge>
               <ThemeToggle />
@@ -47,7 +59,9 @@ export default function ComponentsDemo() {
           <Card>
             <CardHeader>
               <CardTitle>Buttons</CardTitle>
-              <CardDescription>Various button styles and states</CardDescription>
+              <CardDescription>
+                Various button styles and states
+              </CardDescription>
             </CardHeader>
             <CardContent>
               <div className="flex flex-wrap gap-4">
@@ -71,14 +85,17 @@ export default function ComponentsDemo() {
           <Card>
             <CardHeader>
               <CardTitle>Theme Toggle</CardTitle>
-              <CardDescription>Switch between light, dark, and system themes</CardDescription>
+              <CardDescription>
+                Switch between light, dark, and system themes
+              </CardDescription>
             </CardHeader>
             <CardContent>
               <div className="flex items-center gap-4">
                 <ThemeToggle />
                 <p className="text-muted-foreground">
-                  Click the theme toggle to switch between light, dark, and system themes. The theme
-                  preference is automatically saved and persisted across sessions.
+                  Click the theme toggle to switch between light, dark, and
+                  system themes. The theme preference is automatically saved and
+                  persisted across sessions.
                 </p>
               </div>
             </CardContent>
@@ -106,7 +123,9 @@ export default function ComponentsDemo() {
           <Card>
             <CardHeader>
               <CardTitle>Interactive Components</CardTitle>
-              <CardDescription>Switches, sliders, and progress indicators</CardDescription>
+              <CardDescription>
+                Switches, sliders, and progress indicators
+              </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
               <div className="flex items-center space-x-2">
@@ -133,10 +152,16 @@ export default function ComponentsDemo() {
                 <Label>Progress: {progress}%</Label>
                 <Progress value={progress} className="w-full" />
                 <div className="flex gap-2">
-                  <Button size="sm" onClick={() => setProgress(Math.max(0, progress - 10))}>
+                  <Button
+                    size="sm"
+                    onClick={() => setProgress(Math.max(0, progress - 10))}
+                  >
                     Decrease
                   </Button>
-                  <Button size="sm" onClick={() => setProgress(Math.min(100, progress + 10))}>
+                  <Button
+                    size="sm"
+                    onClick={() => setProgress(Math.min(100, progress + 10))}
+                  >
                     Increase
                   </Button>
                 </div>
@@ -147,7 +172,9 @@ export default function ComponentsDemo() {
           <Card>
             <CardHeader>
               <CardTitle>Display Components</CardTitle>
-              <CardDescription>Badges, avatars, and content display</CardDescription>
+              <CardDescription>
+                Badges, avatars, and content display
+              </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
               <div className="flex flex-wrap gap-2">
@@ -159,7 +186,10 @@ export default function ComponentsDemo() {
 
               <div className="flex items-center gap-4">
                 <Avatar>
-                  <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
+                  <AvatarImage
+                    src="https://github.com/shadcn.png"
+                    alt="@shadcn"
+                  />
                   <AvatarFallback>CN</AvatarFallback>
                 </Avatar>
                 <Avatar>
@@ -187,7 +217,8 @@ export default function ComponentsDemo() {
                     <DialogHeader>
                       <DialogTitle>Edit profile</DialogTitle>
                       <DialogDescription>
-                        Make changes to your profile here. Click save when you are done.
+                        Make changes to your profile here. Click save when you
+                        are done.
                       </DialogDescription>
                     </DialogHeader>
                     <div className="grid gap-4 py-4">
@@ -195,7 +226,11 @@ export default function ComponentsDemo() {
                         <Label htmlFor="name" className="text-right">
                           Name
                         </Label>
-                        <Input id="name" defaultValue="Pedro Duarte" className="col-span-3" />
+                        <Input
+                          id="name"
+                          defaultValue="Pedro Duarte"
+                          className="col-span-3"
+                        />
                       </div>
                     </div>
                     <DialogFooter>
@@ -219,7 +254,11 @@ export default function ComponentsDemo() {
                       <div className="grid gap-2">
                         <div className="grid grid-cols-3 items-center gap-4">
                           <Label htmlFor="width">Width</Label>
-                          <Input id="width" defaultValue="100%" className="col-span-2 h-8" />
+                          <Input
+                            id="width"
+                            defaultValue="100%"
+                            className="col-span-2 h-8"
+                          />
                         </div>
                       </div>
                     </div>

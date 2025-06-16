@@ -9,38 +9,38 @@
 // Core Form Types
 // ============================================================================
 
-export type FormStatus = 'draft' | 'published' | 'archived' | 'deleted';
-export type AccessControlType = 'public' | 'private' | 'password' | 'domain';
+export type FormStatus = "draft" | "published" | "archived" | "deleted";
+export type AccessControlType = "public" | "private" | "password" | "domain";
 export type ElementType =
-  | 'text'
-  | 'textarea'
-  | 'email'
-  | 'number'
-  | 'phone'
-  | 'select'
-  | 'radio'
-  | 'checkbox'
-  | 'file'
-  | 'date'
-  | 'time'
-  | 'datetime'
-  | 'url'
-  | 'rating'
-  | 'signature'
-  | 'payment'
-  | 'section'
-  | 'divider'
-  | 'html';
+  | "text"
+  | "textarea"
+  | "email"
+  | "number"
+  | "phone"
+  | "select"
+  | "radio"
+  | "checkbox"
+  | "file"
+  | "date"
+  | "time"
+  | "datetime"
+  | "url"
+  | "rating"
+  | "signature"
+  | "payment"
+  | "section"
+  | "divider"
+  | "html";
 
 export type LogicOperator =
-  | 'equals'
-  | 'not_equals'
-  | 'contains'
-  | 'not_contains'
-  | 'greater_than'
-  | 'less_than'
-  | 'is_empty'
-  | 'is_not_empty';
+  | "equals"
+  | "not_equals"
+  | "contains"
+  | "not_contains"
+  | "greater_than"
+  | "less_than"
+  | "is_empty"
+  | "is_not_empty";
 
 // ============================================================================
 // Form Element Types
@@ -84,7 +84,7 @@ export interface ConditionalLogicCondition {
 export interface ConditionalLogic {
   show: boolean;
   conditions: ConditionalLogicCondition[];
-  logicType?: 'all' | 'any'; // AND or OR logic
+  logicType?: "all" | "any"; // AND or OR logic
 }
 
 export interface FormElement {
@@ -179,8 +179,8 @@ export interface FormSubmitButton {
   text: string;
   color: string;
   backgroundColor: string;
-  position: 'left' | 'center' | 'right';
-  size: 'small' | 'medium' | 'large';
+  position: "left" | "center" | "right";
+  size: "small" | "medium" | "large";
   loading?: boolean;
 }
 
@@ -231,7 +231,7 @@ export interface FormSettings {
   // Advanced Settings
   captcha: {
     enabled: boolean;
-    type: 'recaptcha' | 'hcaptcha';
+    type: "recaptcha" | "hcaptcha";
     siteKey?: string;
   };
 
@@ -245,7 +245,7 @@ export interface FormSettings {
   submissionLimits: {
     enabled: boolean;
     maxSubmissions?: number;
-    limitType: 'total' | 'per_user' | 'per_day';
+    limitType: "total" | "per_user" | "per_day";
   };
 }
 
@@ -318,7 +318,7 @@ export interface FormSEO {
   ogTitle?: string;
   ogDescription?: string;
   ogImage?: string;
-  twitterCard?: 'summary' | 'summary_large_image';
+  twitterCard?: "summary" | "summary_large_image";
   canonicalUrl?: string;
   robots?: string;
 }
@@ -341,13 +341,13 @@ export interface ConditionalRule {
 
   // Actions
   actions: Array<{
-    type: 'show' | 'hide' | 'require' | 'set_value' | 'redirect' | 'calculate';
+    type: "show" | "hide" | "require" | "set_value" | "redirect" | "calculate";
     targetId: string; // Element ID or page ID
     value?: unknown;
   }>;
 
   // Logic Type
-  logicType: 'all' | 'any'; // AND or OR
+  logicType: "all" | "any"; // AND or OR
 
   // Execution Order
   priority: number;
@@ -433,7 +433,7 @@ export interface FormBuilderActions {
   reorderPages: (pageIds: string[]) => void;
 
   // Element Actions
-  addElement: (element: Omit<FormElement, 'id'>) => void;
+  addElement: (element: Omit<FormElement, "id">) => void;
   updateElement: (elementId: string, updates: Partial<FormElement>) => void;
   deleteElement: (elementId: string) => void;
   duplicateElement: (elementId: string) => void;
@@ -509,8 +509,8 @@ export interface FormFilters {
   createdBy?: string;
   dateFrom?: string;
   dateTo?: string;
-  sortBy?: 'createdAt' | 'updatedAt' | 'title' | 'submissions' | 'views';
-  sortOrder?: 'asc' | 'desc';
+  sortBy?: "createdAt" | "updatedAt" | "title" | "submissions" | "views";
+  sortOrder?: "asc" | "desc";
 }
 
 // ============================================================================
@@ -526,7 +526,7 @@ export interface FormTemplate {
   thumbnail?: string;
   isPopular: boolean;
   isFree: boolean;
-  form: Omit<Form, 'id' | 'createdBy' | 'createdAt' | 'updatedAt'>;
+  form: Omit<Form, "id" | "createdBy" | "createdAt" | "updatedAt">;
   createdAt: string;
 }
 
@@ -597,9 +597,9 @@ export interface FormAnalyticsResponse {
 export const isForm = (obj: unknown): obj is Form => {
   return (
     obj !== null &&
-    typeof obj === 'object' &&
-    typeof (obj as any).id === 'string' &&
-    typeof (obj as any).title === 'string' &&
+    typeof obj === "object" &&
+    typeof (obj as any).id === "string" &&
+    typeof (obj as any).title === "string" &&
     Array.isArray((obj as any).pages) &&
     Array.isArray((obj as any).elements)
   );
@@ -608,20 +608,20 @@ export const isForm = (obj: unknown): obj is Form => {
 export const isFormElement = (obj: unknown): obj is FormElement => {
   return (
     obj !== null &&
-    typeof obj === 'object' &&
-    typeof (obj as any).id === 'string' &&
-    typeof (obj as any).type === 'string' &&
-    typeof (obj as any).label === 'string'
+    typeof obj === "object" &&
+    typeof (obj as any).id === "string" &&
+    typeof (obj as any).type === "string" &&
+    typeof (obj as any).label === "string"
   );
 };
 
 export const isFormPage = (obj: unknown): obj is FormPage => {
   return (
     obj !== null &&
-    typeof obj === 'object' &&
-    typeof (obj as any).id === 'string' &&
-    typeof (obj as any).title === 'string' &&
-    typeof (obj as any).order === 'number'
+    typeof obj === "object" &&
+    typeof (obj as any).id === "string" &&
+    typeof (obj as any).title === "string" &&
+    typeof (obj as any).order === "number"
   );
 };
 /* eslint-enable @typescript-eslint/no-explicit-any */
@@ -630,9 +630,15 @@ export const isFormPage = (obj: unknown): obj is FormPage => {
 // Utility Types
 // ============================================================================
 
-export type FormWithoutSensitiveData = Omit<Form, 'accessControl'>;
-export type FormBasicInfo = Pick<Form, 'id' | 'title' | 'description' | 'status' | 'isPublished'>;
-export type FormElementBasic = Pick<FormElement, 'id' | 'type' | 'label' | 'validation'>;
+export type FormWithoutSensitiveData = Omit<Form, "accessControl">;
+export type FormBasicInfo = Pick<
+  Form,
+  "id" | "title" | "description" | "status" | "isPublished"
+>;
+export type FormElementBasic = Pick<
+  FormElement,
+  "id" | "type" | "label" | "validation"
+>;
 
 // ============================================================================
 // Constants
@@ -642,30 +648,33 @@ export const ELEMENT_TYPES: Record<
   ElementType,
   { label: string; category: string; icon?: string }
 > = {
-  text: { label: 'Text Input', category: 'Basic' },
-  textarea: { label: 'Textarea', category: 'Basic' },
-  email: { label: 'Email', category: 'Basic' },
-  number: { label: 'Number', category: 'Basic' },
-  phone: { label: 'Phone', category: 'Basic' },
-  select: { label: 'Dropdown', category: 'Choice' },
-  radio: { label: 'Radio Buttons', category: 'Choice' },
-  checkbox: { label: 'Checkboxes', category: 'Choice' },
-  file: { label: 'File Upload', category: 'Advanced' },
-  date: { label: 'Date', category: 'Date & Time' },
-  time: { label: 'Time', category: 'Date & Time' },
-  datetime: { label: 'Date & Time', category: 'Date & Time' },
-  url: { label: 'Website URL', category: 'Basic' },
-  rating: { label: 'Rating', category: 'Advanced' },
-  signature: { label: 'Signature', category: 'Advanced' },
-  payment: { label: 'Payment', category: 'Advanced' },
-  section: { label: 'Section', category: 'Layout' },
-  divider: { label: 'Divider', category: 'Layout' },
-  html: { label: 'HTML Block', category: 'Layout' },
+  text: { label: "Text Input", category: "Basic" },
+  textarea: { label: "Textarea", category: "Basic" },
+  email: { label: "Email", category: "Basic" },
+  number: { label: "Number", category: "Basic" },
+  phone: { label: "Phone", category: "Basic" },
+  select: { label: "Dropdown", category: "Choice" },
+  radio: { label: "Radio Buttons", category: "Choice" },
+  checkbox: { label: "Checkboxes", category: "Choice" },
+  file: { label: "File Upload", category: "Advanced" },
+  date: { label: "Date", category: "Date & Time" },
+  time: { label: "Time", category: "Date & Time" },
+  datetime: { label: "Date & Time", category: "Date & Time" },
+  url: { label: "Website URL", category: "Basic" },
+  rating: { label: "Rating", category: "Advanced" },
+  signature: { label: "Signature", category: "Advanced" },
+  payment: { label: "Payment", category: "Advanced" },
+  section: { label: "Section", category: "Layout" },
+  divider: { label: "Divider", category: "Layout" },
+  html: { label: "HTML Block", category: "Layout" },
 };
 
-export const FORM_STATUSES: Record<FormStatus, { label: string; color: string }> = {
-  draft: { label: 'Draft', color: 'gray' },
-  published: { label: 'Published', color: 'green' },
-  archived: { label: 'Archived', color: 'yellow' },
-  deleted: { label: 'Deleted', color: 'red' },
+export const FORM_STATUSES: Record<
+  FormStatus,
+  { label: string; color: string }
+> = {
+  draft: { label: "Draft", color: "gray" },
+  published: { label: "Published", color: "green" },
+  archived: { label: "Archived", color: "yellow" },
+  deleted: { label: "Deleted", color: "red" },
 };

@@ -1,5 +1,5 @@
-@import 'tailwindcss';
-@import 'tw-animate-css';
+@import "tailwindcss";
+@import "tw-animate-css";
 /*---break---
  */
 @custom-variant dark (&:is(.dark *));
@@ -81,12 +81,12 @@
 
   /* Fonts */
   --font-sans:
-    var(--font-geist-sans), ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI',
-    Roboto, 'Helvetica Neue', Arial, sans-serif;
-  --font-serif: ui-serif, Georgia, Cambria, 'Times New Roman', Times, serif;
+    var(--font-geist-sans), ui-sans-serif, system-ui, -apple-system,
+    BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-serif: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
   --font-mono:
-    var(--font-geist-mono), ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
-    'Liberation Mono', 'Courier New', monospace;
+    var(--font-geist-mono), ui-monospace, SFMono-Regular, Menlo, Monaco,
+    Consolas, "Liberation Mono", "Courier New", monospace;
 
   /* Shadow colors for plugins */
   --shadow-color-rgb: 0, 0, 0;
@@ -156,19 +156,28 @@
   --shadow-color-highlight: rgba(255, 255, 255, 0.8);
 
   /* Shadows */
-  --shadow-sm: 0 1px 2px var(--shadow-color-low), 0 1px 1px var(--shadow-color-low);
-  --shadow-base: 0 1px 3px var(--shadow-color-low), 0 1px 2px var(--shadow-color-medium);
-  --shadow-md: 0 4px 6px -1px var(--shadow-color-low), 0 2px 4px -1px var(--shadow-color-medium);
-  --shadow-lg: 0 10px 15px -3px var(--shadow-color-low), 0 4px 6px -2px var(--shadow-color-medium);
+  --shadow-sm:
+    0 1px 2px var(--shadow-color-low), 0 1px 1px var(--shadow-color-low);
+  --shadow-base:
+    0 1px 3px var(--shadow-color-low), 0 1px 2px var(--shadow-color-medium);
+  --shadow-md:
+    0 4px 6px -1px var(--shadow-color-low),
+    0 2px 4px -1px var(--shadow-color-medium);
+  --shadow-lg:
+    0 10px 15px -3px var(--shadow-color-low),
+    0 4px 6px -2px var(--shadow-color-medium);
   --shadow-xl:
-    0 20px 25px -5px var(--shadow-color-low), 0 10px 10px -5px var(--shadow-color-medium);
+    0 20px 25px -5px var(--shadow-color-low),
+    0 10px 10px -5px var(--shadow-color-medium);
   --shadow-2xl: 0 25px 50px -12px var(--shadow-color-high);
   --shadow-inner: inset 0 2px 4px 0 var(--shadow-color-low);
 
   /* Premium shadows */
   --shadow-premium:
-    0 1px 1px rgba(var(--shadow-color-rgb), 0.075), 0 2px 2px rgba(var(--shadow-color-rgb), 0.075),
-    0 4px 4px rgba(var(--shadow-color-rgb), 0.075), 0 8px 8px rgba(var(--shadow-color-rgb), 0.075),
+    0 1px 1px rgba(var(--shadow-color-rgb), 0.075),
+    0 2px 2px rgba(var(--shadow-color-rgb), 0.075),
+    0 4px 4px rgba(var(--shadow-color-rgb), 0.075),
+    0 8px 8px rgba(var(--shadow-color-rgb), 0.075),
     0 16px 16px rgba(var(--shadow-color-rgb), 0.075);
 }
 
@@ -204,19 +213,28 @@
   --shadow-color-highlight: rgba(255, 255, 255, 0.05);
 
   /* Shadows */
-  --shadow-sm: 0 1px 2px var(--shadow-color-low), 0 1px 1px var(--shadow-color-low);
-  --shadow-base: 0 1px 3px var(--shadow-color-low), 0 1px 2px var(--shadow-color-medium);
-  --shadow-md: 0 4px 6px -1px var(--shadow-color-low), 0 2px 4px -1px var(--shadow-color-medium);
-  --shadow-lg: 0 10px 15px -3px var(--shadow-color-low), 0 4px 6px -2px var(--shadow-color-medium);
+  --shadow-sm:
+    0 1px 2px var(--shadow-color-low), 0 1px 1px var(--shadow-color-low);
+  --shadow-base:
+    0 1px 3px var(--shadow-color-low), 0 1px 2px var(--shadow-color-medium);
+  --shadow-md:
+    0 4px 6px -1px var(--shadow-color-low),
+    0 2px 4px -1px var(--shadow-color-medium);
+  --shadow-lg:
+    0 10px 15px -3px var(--shadow-color-low),
+    0 4px 6px -2px var(--shadow-color-medium);
   --shadow-xl:
-    0 20px 25px -5px var(--shadow-color-low), 0 10px 10px -5px var(--shadow-color-medium);
+    0 20px 25px -5px var(--shadow-color-low),
+    0 10px 10px -5px var(--shadow-color-medium);
   --shadow-2xl: 0 25px 50px -12px var(--shadow-color-high);
   --shadow-inner: inset 0 2px 4px 0 var(--shadow-color-low);
 
   /* Premium shadows */
   --shadow-premium:
-    0 1px 1px rgba(var(--shadow-color-rgb), 0.3), 0 2px 2px rgba(var(--shadow-color-rgb), 0.3),
-    0 4px 4px rgba(var(--shadow-color-rgb), 0.3), 0 8px 8px rgba(var(--shadow-color-rgb), 0.3),
+    0 1px 1px rgba(var(--shadow-color-rgb), 0.3),
+    0 2px 2px rgba(var(--shadow-color-rgb), 0.3),
+    0 4px 4px rgba(var(--shadow-color-rgb), 0.3),
+    0 8px 8px rgba(var(--shadow-color-rgb), 0.3),
     0 16px 16px rgba(var(--shadow-color-rgb), 0.3);
   --destructive: oklch(0.704 0.191 22.216);
   --chart-1: oklch(0.488 0.243 264.376);
@@ -271,12 +289,12 @@
 body {
   font-family: var(--font-sans);
   font-feature-settings:
-    'rlig' 1,
-    'calt' 1;
+    "rlig" 1,
+    "calt" 1;
 }
 
 /* Theme transition */
-html[style*='--transition-theme:true'] * {
+html[style*="--transition-theme:true"] * {
   transition:
     color var(--duration-slow) var(--easing-ease-in-out),
     background-color var(--duration-slow) var(--easing-ease-in-out),
@@ -423,31 +441,36 @@ html[style*='--transition-theme:true'] * {
 }
 
 .animate-slide-in-right {
-  animation: slideInFromRight var(--duration-normal) var(--easing-premium) forwards;
+  animation: slideInFromRight var(--duration-normal) var(--easing-premium)
+    forwards;
   opacity: 0;
   transform: translateX(20px);
 }
 
 .animate-slide-out-right {
-  animation: slideOutToRight var(--duration-normal) var(--easing-premium) forwards;
+  animation: slideOutToRight var(--duration-normal) var(--easing-premium)
+    forwards;
   opacity: 1;
   transform: translateX(0);
 }
 
 .animate-slide-in-bottom {
-  animation: slideInFromBottom var(--duration-normal) var(--easing-premium) forwards;
+  animation: slideInFromBottom var(--duration-normal) var(--easing-premium)
+    forwards;
   opacity: 0;
   transform: translateY(20px);
 }
 
 .animate-slide-out-bottom {
-  animation: slideOutToBottom var(--duration-normal) var(--easing-premium) forwards;
+  animation: slideOutToBottom var(--duration-normal) var(--easing-premium)
+    forwards;
   opacity: 1;
   transform: translateY(0);
 }
 
 .animate-pulse {
-  animation: pulse calc(var(--duration-slow) * 2) var(--easing-ease-in-out) infinite;
+  animation: pulse calc(var(--duration-slow) * 2) var(--easing-ease-in-out)
+    infinite;
 }
 
 .animate-spin {
@@ -456,7 +479,12 @@ html[style*='--transition-theme:true'] * {
 
 .animate-shimmer {
   animation: shimmer calc(var(--duration-slowest) * 4) linear infinite;
-  background-image: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  background-image: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.2),
+    transparent
+  );
   background-size: 200% 100%;
 }
 
@@ -565,15 +593,27 @@ html[style*='--transition-theme:true'] * {
 
 /* Premium gradient utilities */
 .gradient-primary {
-  background: linear-gradient(135deg, var(--color-primary-400), var(--color-primary-600));
+  background: linear-gradient(
+    135deg,
+    var(--color-primary-400),
+    var(--color-primary-600)
+  );
 }
 
 .gradient-secondary {
-  background: linear-gradient(135deg, var(--color-secondary-400), var(--color-secondary-600));
+  background: linear-gradient(
+    135deg,
+    var(--color-secondary-400),
+    var(--color-secondary-600)
+  );
 }
 
 .gradient-accent {
-  background: linear-gradient(135deg, var(--color-accent-400), var(--color-accent-600));
+  background: linear-gradient(
+    135deg,
+    var(--color-accent-400),
+    var(--color-accent-600)
+  );
 }
 
 .gradient-premium {
@@ -652,13 +692,18 @@ html[style*='--transition-theme:true'] * {
 }
 
 .button-premium::after {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.2), transparent);
+  background: linear-gradient(
+    to right,
+    transparent,
+    rgba(255, 255, 255, 0.2),
+    transparent
+  );
   transform: translateX(-100%);
   transition: transform var(--duration-slow) var(--easing-premium);
 }

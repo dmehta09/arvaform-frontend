@@ -46,7 +46,7 @@ This directory contains the ShadCN/UI components integrated with our custom Arva
 ### Basic Button
 
 ```tsx
-import { Button } from '@/components/ui/button';
+import { Button } from "@/components/ui/button";
 
 <Button variant="default" size="md">
   Click me
@@ -56,9 +56,9 @@ import { Button } from '@/components/ui/button';
 ### Form with Validation
 
 ```tsx
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Button } from '@/components/ui/button';
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
 
 <div className="space-y-4">
   <div className="space-y-2">
@@ -72,7 +72,13 @@ import { Button } from '@/components/ui/button';
 ### Card Layout
 
 ```tsx
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 
 <Card>
   <CardHeader>
@@ -88,20 +94,20 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 ### Theme Toggle
 
 ```tsx
-import { ThemeToggle } from '@/components/ui/theme-toggle';
+import { ThemeToggle } from "@/components/ui/theme-toggle";
 
 // Full theme toggle with dropdown
 <ThemeToggle />;
 
 // Simple toggle between light/dark
-import { SimpleThemeToggle } from '@/components/ui/theme-toggle';
+import { SimpleThemeToggle } from "@/components/ui/theme-toggle";
 <SimpleThemeToggle />;
 ```
 
 ### Theme Provider Setup
 
 ```tsx
-import { ThemeProvider } from '@/components/theme-provider';
+import { ThemeProvider } from "@/components/theme-provider";
 
 export default function RootLayout({ children }) {
   return (

@@ -9,10 +9,14 @@
 // Core Submission Types
 // ============================================================================
 
-export type SubmissionStatus = 'pending' | 'processing' | 'completed' | 'failed';
-export type PaymentStatus = 'pending' | 'completed' | 'failed' | 'refunded';
-export type IntegrationStatus = 'pending' | 'success' | 'failed';
-export type DeviceType = 'desktop' | 'tablet' | 'mobile';
+export type SubmissionStatus =
+  | "pending"
+  | "processing"
+  | "completed"
+  | "failed";
+export type PaymentStatus = "pending" | "completed" | "failed" | "refunded";
+export type IntegrationStatus = "pending" | "success" | "failed";
+export type DeviceType = "desktop" | "tablet" | "mobile";
 
 // ============================================================================
 // File Upload Types
@@ -38,7 +42,7 @@ export interface FileUploadProgress {
   fieldId: string;
   filename: string;
   progress: number; // 0-100
-  status: 'uploading' | 'completed' | 'error';
+  status: "uploading" | "completed" | "error";
   error?: string;
 }
 
@@ -76,7 +80,7 @@ export interface PaymentInfo {
 
   // Payment Details
   paymentMethod?: {
-    type: 'card' | 'paypal' | 'bank_transfer';
+    type: "card" | "paypal" | "bank_transfer";
     last4?: string;
     brand?: string;
     expiryMonth?: number;
@@ -126,7 +130,7 @@ export interface ProcessingInfo {
   // Processing stages
   stages: Array<{
     name: string;
-    status: 'pending' | 'processing' | 'completed' | 'failed';
+    status: "pending" | "processing" | "completed" | "failed";
     startedAt?: string;
     completedAt?: string;
     error?: string;
@@ -152,7 +156,7 @@ export interface DigitalSignature {
 
   // Signature verification
   isVerified: boolean;
-  verificationMethod: 'email' | 'sms' | 'document';
+  verificationMethod: "email" | "sms" | "document";
   verificationData?: {
     code?: string;
     documentId?: string;
@@ -269,7 +273,7 @@ export interface FormSubmission {
   // Additional Information
   notes?: string; // Admin notes
   tags?: string[]; // For organization
-  priority?: 'low' | 'normal' | 'high' | 'urgent';
+  priority?: "low" | "normal" | "high" | "urgent";
 
   // Timestamps
   submittedAt: string; // ISO date string
@@ -359,13 +363,13 @@ export interface UpdateSubmissionDto {
   data?: Record<string, unknown>;
   notes?: string;
   tags?: string[];
-  priority?: 'low' | 'normal' | 'high' | 'urgent';
+  priority?: "low" | "normal" | "high" | "urgent";
   status?: SubmissionStatus;
 }
 
 export interface ProcessSubmissionDto {
   submissionId: string;
-  action: 'approve' | 'reject' | 'retry' | 'archive';
+  action: "approve" | "reject" | "retry" | "archive";
   notes?: string;
 }
 
@@ -383,7 +387,7 @@ export interface SubmissionListItem {
     isAnonymous: boolean;
   };
   status: SubmissionStatus;
-  priority?: 'low' | 'normal' | 'high' | 'urgent';
+  priority?: "low" | "normal" | "high" | "urgent";
   payment?: {
     amount: number;
     currency: string;
@@ -413,7 +417,7 @@ export interface SubmissionListResponse {
 export interface SubmissionFilters {
   formId?: string;
   status?: SubmissionStatus | SubmissionStatus[];
-  priority?: 'low' | 'normal' | 'high' | 'urgent';
+  priority?: "low" | "normal" | "high" | "urgent";
   submitterEmail?: string;
   hasPayment?: boolean;
   hasFiles?: boolean;
@@ -422,8 +426,8 @@ export interface SubmissionFilters {
   dateTo?: string;
   search?: string; // Search in submission data
   tags?: string[];
-  sortBy?: 'submittedAt' | 'processedAt' | 'priority' | 'status';
-  sortOrder?: 'asc' | 'desc';
+  sortBy?: "submittedAt" | "processedAt" | "priority" | "status";
+  sortOrder?: "asc" | "desc";
 }
 
 // ============================================================================
@@ -479,7 +483,7 @@ export interface SubmissionAnalytics {
 export interface ExportSubmissionsDto {
   formId?: string;
   filters?: SubmissionFilters;
-  format: 'csv' | 'excel' | 'json' | 'pdf';
+  format: "csv" | "excel" | "json" | "pdf";
   includeFiles?: boolean;
   dateRange?: {
     start: string;
@@ -555,32 +559,32 @@ export interface SubmissionAnalyticsResponse {
 export const isFormSubmission = (obj: unknown): obj is FormSubmission => {
   return (
     obj !== null &&
-    typeof obj === 'object' &&
-    typeof (obj as any).id === 'string' &&
-    typeof (obj as any).formId === 'string' &&
-    typeof (obj as any).status === 'string' &&
+    typeof obj === "object" &&
+    typeof (obj as any).id === "string" &&
+    typeof (obj as any).formId === "string" &&
+    typeof (obj as any).status === "string" &&
     (obj as any).data &&
-    typeof (obj as any).data === 'object'
+    typeof (obj as any).data === "object"
   );
 };
 
 export const isFileUpload = (obj: unknown): obj is FileUpload => {
   return (
     obj !== null &&
-    typeof obj === 'object' &&
-    typeof (obj as any).fieldId === 'string' &&
-    typeof (obj as any).filename === 'string' &&
-    typeof (obj as any).url === 'string'
+    typeof obj === "object" &&
+    typeof (obj as any).fieldId === "string" &&
+    typeof (obj as any).filename === "string" &&
+    typeof (obj as any).url === "string"
   );
 };
 
 export const isPaymentInfo = (obj: unknown): obj is PaymentInfo => {
   return (
     obj !== null &&
-    typeof obj === 'object' &&
-    typeof (obj as any).amount === 'number' &&
-    typeof (obj as any).currency === 'string' &&
-    typeof (obj as any).status === 'string'
+    typeof obj === "object" &&
+    typeof (obj as any).amount === "number" &&
+    typeof (obj as any).currency === "string" &&
+    typeof (obj as any).status === "string"
   );
 };
 /* eslint-enable @typescript-eslint/no-explicit-any */
@@ -591,13 +595,16 @@ export const isPaymentInfo = (obj: unknown): obj is PaymentInfo => {
 
 export type SubmissionWithoutSensitiveData = Omit<
   FormSubmission,
-  'metadata.ipAddress' | 'payment.paymentMethod'
+  "metadata.ipAddress" | "payment.paymentMethod"
 >;
 export type SubmissionBasicInfo = Pick<
   FormSubmission,
-  'id' | 'formId' | 'status' | 'submittedAt' | 'submitter'
+  "id" | "formId" | "status" | "submittedAt" | "submitter"
 >;
-export type SubmissionPreview = Pick<FormSubmission, 'id' | 'data' | 'submitter' | 'submittedAt'>;
+export type SubmissionPreview = Pick<
+  FormSubmission,
+  "id" | "data" | "submitter" | "submittedAt"
+>;
 
 // ============================================================================
 // Constants
@@ -607,21 +614,27 @@ export const SUBMISSION_STATUSES: Record<
   SubmissionStatus,
   { label: string; color: string; icon?: string }
 > = {
-  pending: { label: 'Pending', color: 'yellow' },
-  processing: { label: 'Processing', color: 'blue' },
-  completed: { label: 'Completed', color: 'green' },
-  failed: { label: 'Failed', color: 'red' },
+  pending: { label: "Pending", color: "yellow" },
+  processing: { label: "Processing", color: "blue" },
+  completed: { label: "Completed", color: "green" },
+  failed: { label: "Failed", color: "red" },
 };
 
-export const PAYMENT_STATUSES: Record<PaymentStatus, { label: string; color: string }> = {
-  pending: { label: 'Pending', color: 'yellow' },
-  completed: { label: 'Completed', color: 'green' },
-  failed: { label: 'Failed', color: 'red' },
-  refunded: { label: 'Refunded', color: 'gray' },
+export const PAYMENT_STATUSES: Record<
+  PaymentStatus,
+  { label: string; color: string }
+> = {
+  pending: { label: "Pending", color: "yellow" },
+  completed: { label: "Completed", color: "green" },
+  failed: { label: "Failed", color: "red" },
+  refunded: { label: "Refunded", color: "gray" },
 };
 
-export const INTEGRATION_STATUSES: Record<IntegrationStatus, { label: string; color: string }> = {
-  pending: { label: 'Pending', color: 'yellow' },
-  success: { label: 'Success', color: 'green' },
-  failed: { label: 'Failed', color: 'red' },
+export const INTEGRATION_STATUSES: Record<
+  IntegrationStatus,
+  { label: string; color: string }
+> = {
+  pending: { label: "Pending", color: "yellow" },
+  success: { label: "Success", color: "green" },
+  failed: { label: "Failed", color: "red" },
 };

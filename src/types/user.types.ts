@@ -9,10 +9,19 @@
 // Core User Types
 // ============================================================================
 
-export type UserStatus = 'active' | 'inactive' | 'suspended' | 'pending_verification';
-export type SubscriptionPlan = 'free' | 'basic' | 'premium' | 'enterprise';
-export type SubscriptionStatus = 'active' | 'canceled' | 'past_due' | 'trial' | 'expired';
-export type OAuthProvider = 'google' | 'github' | 'facebook' | 'microsoft';
+export type UserStatus =
+  | "active"
+  | "inactive"
+  | "suspended"
+  | "pending_verification";
+export type SubscriptionPlan = "free" | "basic" | "premium" | "enterprise";
+export type SubscriptionStatus =
+  | "active"
+  | "canceled"
+  | "past_due"
+  | "trial"
+  | "expired";
+export type OAuthProvider = "google" | "github" | "facebook" | "microsoft";
 
 // ============================================================================
 // User Profile & Account Types
@@ -189,7 +198,7 @@ export interface JwtPayload {
   status: UserStatus;
   iat: number; // Issued at
   exp: number; // Expiration time
-  type: 'access' | 'refresh';
+  type: "access" | "refresh";
   jti?: string; // Unique token identifier (refresh tokens only)
 }
 
@@ -236,11 +245,11 @@ export interface AuthContextType {
 // ============================================================================
 
 export interface UserPreferences {
-  theme: 'light' | 'dark' | 'system';
+  theme: "light" | "dark" | "system";
   language: string;
   timezone: string;
   dateFormat: string;
-  timeFormat: '12' | '24';
+  timeFormat: "12" | "24";
   notifications: {
     email: {
       marketing: boolean;
@@ -256,7 +265,7 @@ export interface UserPreferences {
     };
   };
   privacy: {
-    profileVisibility: 'public' | 'private' | 'organization';
+    profileVisibility: "public" | "private" | "organization";
     activityTracking: boolean;
     dataCollection: boolean;
   };
@@ -390,8 +399,8 @@ export interface UserFilters {
   search?: string;
   dateFrom?: string;
   dateTo?: string;
-  sortBy?: 'createdAt' | 'lastLoginAt' | 'email' | 'firstName';
-  sortOrder?: 'asc' | 'desc';
+  sortBy?: "createdAt" | "lastLoginAt" | "email" | "firstName";
+  sortOrder?: "asc" | "desc";
 }
 
 // ============================================================================
@@ -429,44 +438,44 @@ export interface UserValidationRules {
 export const isUser = (obj: unknown): obj is User => {
   return (
     obj !== null &&
-    typeof obj === 'object' &&
-    'id' in obj &&
-    'email' in obj &&
-    'firstName' in obj &&
-    'lastName' in obj &&
-    typeof (obj as User).id === 'string' &&
-    typeof (obj as User).email === 'string' &&
-    typeof (obj as User).firstName === 'string' &&
-    typeof (obj as User).lastName === 'string'
+    typeof obj === "object" &&
+    "id" in obj &&
+    "email" in obj &&
+    "firstName" in obj &&
+    "lastName" in obj &&
+    typeof (obj as User).id === "string" &&
+    typeof (obj as User).email === "string" &&
+    typeof (obj as User).firstName === "string" &&
+    typeof (obj as User).lastName === "string"
   );
 };
 
 export const isUserProfileDto = (obj: unknown): obj is UserProfileDto => {
   return (
     obj !== null &&
-    typeof obj === 'object' &&
-    'id' in obj &&
-    'email' in obj &&
-    'firstName' in obj &&
-    'lastName' in obj &&
-    'status' in obj &&
-    typeof (obj as UserProfileDto).id === 'string' &&
-    typeof (obj as UserProfileDto).email === 'string' &&
-    typeof (obj as UserProfileDto).firstName === 'string' &&
-    typeof (obj as UserProfileDto).lastName === 'string' &&
-    typeof (obj as UserProfileDto).status === 'string'
+    typeof obj === "object" &&
+    "id" in obj &&
+    "email" in obj &&
+    "firstName" in obj &&
+    "lastName" in obj &&
+    "status" in obj &&
+    typeof (obj as UserProfileDto).id === "string" &&
+    typeof (obj as UserProfileDto).email === "string" &&
+    typeof (obj as UserProfileDto).firstName === "string" &&
+    typeof (obj as UserProfileDto).lastName === "string" &&
+    typeof (obj as UserProfileDto).status === "string"
   );
 };
 
 export const isLoginResponse = (obj: unknown): obj is LoginResponse => {
   return (
     obj !== null &&
-    typeof obj === 'object' &&
-    'accessToken' in obj &&
-    'refreshToken' in obj &&
-    'user' in obj &&
-    typeof (obj as LoginResponse).accessToken === 'string' &&
-    typeof (obj as LoginResponse).refreshToken === 'string' &&
+    typeof obj === "object" &&
+    "accessToken" in obj &&
+    "refreshToken" in obj &&
+    "user" in obj &&
+    typeof (obj as LoginResponse).accessToken === "string" &&
+    typeof (obj as LoginResponse).refreshToken === "string" &&
     (obj as LoginResponse).user &&
     isUserProfileDto((obj as LoginResponse).user)
   );
@@ -476,6 +485,12 @@ export const isLoginResponse = (obj: unknown): obj is LoginResponse => {
 // Utility Types
 // ============================================================================
 
-export type UserWithoutPassword = Omit<User, 'password'>;
-export type UserPublicProfile = Pick<User, 'id' | 'firstName' | 'lastName' | 'profile'>;
-export type UserBasicInfo = Pick<User, 'id' | 'email' | 'firstName' | 'lastName' | 'status'>;
+export type UserWithoutPassword = Omit<User, "password">;
+export type UserPublicProfile = Pick<
+  User,
+  "id" | "firstName" | "lastName" | "profile"
+>;
+export type UserBasicInfo = Pick<
+  User,
+  "id" | "email" | "firstName" | "lastName" | "status"
+>;

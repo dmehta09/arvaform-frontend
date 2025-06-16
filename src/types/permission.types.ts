@@ -10,24 +10,24 @@
 // ============================================================================
 
 export type PermissionAction =
-  | 'create'
-  | 'read'
-  | 'update'
-  | 'delete'
-  | 'publish'
-  | 'manage'
-  | 'view'
-  | 'edit';
+  | "create"
+  | "read"
+  | "update"
+  | "delete"
+  | "publish"
+  | "manage"
+  | "view"
+  | "edit";
 export type PermissionResource =
-  | 'form'
-  | 'submission'
-  | 'user'
-  | 'organization'
-  | 'role'
-  | 'integration'
-  | 'analytics'
-  | 'billing';
-export type ContextType = 'global' | 'organization' | 'form' | 'submission';
+  | "form"
+  | "submission"
+  | "user"
+  | "organization"
+  | "role"
+  | "integration"
+  | "analytics"
+  | "billing";
+export type ContextType = "global" | "organization" | "form" | "submission";
 
 // ============================================================================
 // Permission Types
@@ -210,7 +210,7 @@ export interface OrganizationMember {
   roleDetails?: Role;
   joinedAt: string; // ISO date string
   invitedBy?: string; // User ID
-  status: 'active' | 'pending' | 'suspended';
+  status: "active" | "pending" | "suspended";
 
   // Last activity
   lastSeenAt?: string; // ISO date string
@@ -243,7 +243,7 @@ export interface Organization {
   };
 
   // Status
-  status: 'active' | 'suspended' | 'deleted';
+  status: "active" | "suspended" | "deleted";
 
   // Timestamps
   createdAt: string; // ISO date string
@@ -266,7 +266,7 @@ export interface PermissionCheckRequest {
 export interface PermissionCheckResult {
   allowed: boolean;
   reason?: string;
-  source: 'role' | 'direct' | 'inherited' | 'system';
+  source: "role" | "direct" | "inherited" | "system";
   expiresAt?: string; // ISO date string
   constraints?: UserPermissionConstraints;
 }
@@ -338,7 +338,7 @@ export interface InviteUserDto {
 export interface UpdateMemberDto {
   userId: string;
   roleId?: string;
-  status?: 'active' | 'suspended';
+  status?: "active" | "suspended";
 }
 
 // ============================================================================
@@ -369,7 +369,11 @@ export interface PermissionState {
 
 export interface PermissionActions {
   // Permission checks
-  checkPermission: (permission: string, resource?: string, resourceId?: string) => boolean;
+  checkPermission: (
+    permission: string,
+    resource?: string,
+    resourceId?: string,
+  ) => boolean;
   checkMultiplePermissions: (permissions: string[]) => Record<string, boolean>;
 
   // Role management
@@ -439,7 +443,7 @@ export interface OrganizationMemberListResponse {
 
 export interface PermissionAuditLog {
   id: string;
-  action: 'grant' | 'revoke' | 'modify' | 'expire';
+  action: "grant" | "revoke" | "modify" | "expire";
   actorId: string; // Who performed the action
   actor?: {
     id: string;
@@ -477,7 +481,7 @@ export interface PermissionAuditLog {
 export interface PermissionAuditFilters {
   actorId?: string;
   targetUserId?: string;
-  action?: 'grant' | 'revoke' | 'modify' | 'expire';
+  action?: "grant" | "revoke" | "modify" | "expire";
   permissionId?: string;
   roleId?: string;
   organizationId?: string;
@@ -514,7 +518,7 @@ export interface RolePreset {
   color?: string;
   permissions: string[]; // Permission IDs
   isPopular: boolean;
-  category: 'basic' | 'advanced' | 'custom';
+  category: "basic" | "advanced" | "custom";
 
   // Usage statistics
   usageCount: number;
@@ -568,9 +572,9 @@ export interface InviteUserResponse {
 export const isPermission = (obj: unknown): obj is Permission => {
   return (
     obj !== null &&
-    typeof obj === 'object' &&
-    typeof (obj as any).id === 'string' &&
-    typeof (obj as any).name === 'string' &&
+    typeof obj === "object" &&
+    typeof (obj as any).id === "string" &&
+    typeof (obj as any).name === "string" &&
     Array.isArray((obj as any).actions)
   );
 };
@@ -578,9 +582,9 @@ export const isPermission = (obj: unknown): obj is Permission => {
 export const isRole = (obj: unknown): obj is Role => {
   return (
     obj !== null &&
-    typeof obj === 'object' &&
-    typeof (obj as any).id === 'string' &&
-    typeof (obj as any).name === 'string' &&
+    typeof obj === "object" &&
+    typeof (obj as any).id === "string" &&
+    typeof (obj as any).name === "string" &&
     Array.isArray((obj as any).permissions)
   );
 };
@@ -588,10 +592,10 @@ export const isRole = (obj: unknown): obj is Role => {
 export const isOrganization = (obj: unknown): obj is Organization => {
   return (
     obj !== null &&
-    typeof obj === 'object' &&
-    typeof (obj as any).id === 'string' &&
-    typeof (obj as any).name === 'string' &&
-    typeof (obj as any).slug === 'string'
+    typeof obj === "object" &&
+    typeof (obj as any).id === "string" &&
+    typeof (obj as any).name === "string" &&
+    typeof (obj as any).slug === "string"
   );
 };
 
@@ -603,10 +607,16 @@ export const isOrganization = (obj: unknown): obj is Organization => {
 
 export type UserPermissionSummary = Pick<
   UserPermission,
-  'id' | 'roleId' | 'permissionId' | 'context' | 'expiresAt'
+  "id" | "roleId" | "permissionId" | "context" | "expiresAt"
 >;
-export type RoleBasicInfo = Pick<Role, 'id' | 'name' | 'description' | 'isSystemRole'>;
-export type OrganizationBasicInfo = Pick<Organization, 'id' | 'name' | 'slug' | 'memberCount'>;
+export type RoleBasicInfo = Pick<
+  Role,
+  "id" | "name" | "description" | "isSystemRole"
+>;
+export type OrganizationBasicInfo = Pick<
+  Organization,
+  "id" | "name" | "slug" | "memberCount"
+>;
 
 // ============================================================================
 // Permission Constants
@@ -614,51 +624,51 @@ export type OrganizationBasicInfo = Pick<Organization, 'id' | 'name' | 'slug' | 
 
 export const SYSTEM_PERMISSIONS = {
   // Form permissions
-  FORM_CREATE: 'form.create',
-  FORM_READ: 'form.read',
-  FORM_UPDATE: 'form.update',
-  FORM_DELETE: 'form.delete',
-  FORM_PUBLISH: 'form.publish',
+  FORM_CREATE: "form.create",
+  FORM_READ: "form.read",
+  FORM_UPDATE: "form.update",
+  FORM_DELETE: "form.delete",
+  FORM_PUBLISH: "form.publish",
 
   // Submission permissions
-  SUBMISSION_READ: 'submission.read',
-  SUBMISSION_UPDATE: 'submission.update',
-  SUBMISSION_DELETE: 'submission.delete',
-  SUBMISSION_EXPORT: 'submission.export',
+  SUBMISSION_READ: "submission.read",
+  SUBMISSION_UPDATE: "submission.update",
+  SUBMISSION_DELETE: "submission.delete",
+  SUBMISSION_EXPORT: "submission.export",
 
   // User permissions
-  USER_READ: 'user.read',
-  USER_UPDATE: 'user.update',
-  USER_DELETE: 'user.delete',
-  USER_INVITE: 'user.invite',
+  USER_READ: "user.read",
+  USER_UPDATE: "user.update",
+  USER_DELETE: "user.delete",
+  USER_INVITE: "user.invite",
 
   // Organization permissions
-  ORG_READ: 'organization.read',
-  ORG_UPDATE: 'organization.update',
-  ORG_MANAGE: 'organization.manage',
-  ORG_BILLING: 'organization.billing',
+  ORG_READ: "organization.read",
+  ORG_UPDATE: "organization.update",
+  ORG_MANAGE: "organization.manage",
+  ORG_BILLING: "organization.billing",
 
   // Role permissions
-  ROLE_CREATE: 'role.create',
-  ROLE_UPDATE: 'role.update',
-  ROLE_DELETE: 'role.delete',
-  ROLE_ASSIGN: 'role.assign',
+  ROLE_CREATE: "role.create",
+  ROLE_UPDATE: "role.update",
+  ROLE_DELETE: "role.delete",
+  ROLE_ASSIGN: "role.assign",
 
   // Analytics permissions
-  ANALYTICS_READ: 'analytics.read',
-  ANALYTICS_EXPORT: 'analytics.export',
+  ANALYTICS_READ: "analytics.read",
+  ANALYTICS_EXPORT: "analytics.export",
 
   // Integration permissions
-  INTEGRATION_CREATE: 'integration.create',
-  INTEGRATION_UPDATE: 'integration.update',
-  INTEGRATION_DELETE: 'integration.delete',
+  INTEGRATION_CREATE: "integration.create",
+  INTEGRATION_UPDATE: "integration.update",
+  INTEGRATION_DELETE: "integration.delete",
 } as const;
 
 export const SYSTEM_ROLES = {
-  SUPER_ADMIN: 'super_admin',
-  ORG_ADMIN: 'org_admin',
-  ORG_MEMBER: 'org_member',
-  FORM_CREATOR: 'form_creator',
-  FORM_VIEWER: 'form_viewer',
-  GUEST: 'guest',
+  SUPER_ADMIN: "super_admin",
+  ORG_ADMIN: "org_admin",
+  ORG_MEMBER: "org_member",
+  FORM_CREATOR: "form_creator",
+  FORM_VIEWER: "form_viewer",
+  GUEST: "guest",
 } as const;
