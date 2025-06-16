@@ -1,68 +1,61 @@
-import { ThemeProvider } from "@/components/theme-provider";
-import type { Metadata } from "next";
-import { Inter, JetBrains_Mono } from "next/font/google";
-import "./globals.css";
+import { ThemeProvider } from '@/components/theme-provider';
+import { AuthProvider } from '@/providers/auth-provider';
+import { QueryProvider } from '@/providers/query-provider';
+import type { Metadata } from 'next';
+import { Inter, JetBrains_Mono } from 'next/font/google';
+import './globals.css';
 
 // Configure modern fonts for ArvaForm
 const inter = Inter({
-  variable: "--font-inter",
-  subsets: ["latin"],
-  display: "swap",
+  variable: '--font-inter',
+  subsets: ['latin'],
+  display: 'swap',
   preload: true,
 });
 
 const jetbrainsMono = JetBrains_Mono({
-  variable: "--font-jetbrains-mono",
-  subsets: ["latin"],
-  display: "swap",
+  variable: '--font-jetbrains-mono',
+  subsets: ['latin'],
+  display: 'swap',
   preload: true,
 });
 
 // ArvaForm metadata configuration
 export const metadata: Metadata = {
   title: {
-    default: "ArvaForm - Advanced Form Builder",
-    template: "%s | ArvaForm",
+    default: 'ArvaForm - Advanced Form Builder',
+    template: '%s | ArvaForm',
   },
   description:
-    "Create, customize, and deploy advanced forms with conditional logic, integrations, and analytics. The modern form builder for teams and enterprises.",
-  keywords: [
-    "form builder",
-    "forms",
-    "survey",
-    "conditional logic",
-    "integrations",
-    "analytics",
-  ],
-  authors: [{ name: "ArvaForm Team" }],
-  creator: "ArvaForm",
-  publisher: "ArvaForm",
+    'Create, customize, and deploy advanced forms with conditional logic, integrations, and analytics. The modern form builder for teams and enterprises.',
+  keywords: ['form builder', 'forms', 'survey', 'conditional logic', 'integrations', 'analytics'],
+  authors: [{ name: 'ArvaForm Team' }],
+  creator: 'ArvaForm',
+  publisher: 'ArvaForm',
   formatDetection: {
     email: false,
     address: false,
     telephone: false,
   },
-  metadataBase: new URL(
-    process.env["NEXT_PUBLIC_APP_URL"] || "http://localhost:3000",
-  ),
+  metadataBase: new URL(process.env['NEXT_PUBLIC_APP_URL'] || 'http://localhost:3000'),
   alternates: {
-    canonical: "/",
+    canonical: '/',
   },
   openGraph: {
-    type: "website",
-    locale: "en_US",
-    url: "/",
-    title: "ArvaForm - Advanced Form Builder",
+    type: 'website',
+    locale: 'en_US',
+    url: '/',
+    title: 'ArvaForm - Advanced Form Builder',
     description:
-      "Create, customize, and deploy advanced forms with conditional logic, integrations, and analytics.",
-    siteName: "ArvaForm",
+      'Create, customize, and deploy advanced forms with conditional logic, integrations, and analytics.',
+    siteName: 'ArvaForm',
   },
   twitter: {
-    card: "summary_large_image",
-    title: "ArvaForm - Advanced Form Builder",
+    card: 'summary_large_image',
+    title: 'ArvaForm - Advanced Form Builder',
     description:
-      "Create, customize, and deploy advanced forms with conditional logic, integrations, and analytics.",
-    creator: "@arvaform",
+      'Create, customize, and deploy advanced forms with conditional logic, integrations, and analytics.',
+    creator: '@arvaform',
   },
   robots: {
     index: true,
@@ -70,9 +63,9 @@ export const metadata: Metadata = {
     googleBot: {
       index: true,
       follow: true,
-      "max-video-preview": -1,
-      "max-image-preview": "large",
-      "max-snippet": -1,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
     },
   },
   verification: {
@@ -92,13 +85,16 @@ export default function RootLayout({
     <html
       lang="en"
       className={`${inter.variable} ${jetbrainsMono.variable}`}
-      suppressHydrationWarning
-    >
+      suppressHydrationWarning>
       <body className="font-sans antialiased bg-background text-foreground">
-        <ThemeProvider>
-          {/* Main content */}
-          <main>{children}</main>
-        </ThemeProvider>
+        <QueryProvider>
+          <AuthProvider>
+            <ThemeProvider>
+              {/* Main content */}
+              <main>{children}</main>
+            </ThemeProvider>
+          </AuthProvider>
+        </QueryProvider>
 
         {/* Global scripts and third-party integrations can be added here */}
       </body>
