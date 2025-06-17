@@ -1,7 +1,5 @@
 'use client';
 
-import { getAdaptiveCollisionDetection } from '@/lib/dnd/collision-detection';
-import { isMobileDevice, useFormBuilderSensors } from '@/lib/dnd/sensors';
 import {
   DragData,
   DropResult,
@@ -10,16 +8,22 @@ import {
   FormElement,
 } from '@/types/form-builder.types';
 import {
+  closestCenter,
   DndContext,
   DragCancelEvent,
   DragEndEvent,
   DragMoveEvent,
   DragOverEvent,
   DragStartEvent,
+  KeyboardSensor,
+  MouseSensor,
+  TouchSensor,
   UniqueIdentifier,
+  useSensor,
+  useSensors,
 } from '@dnd-kit/core';
-import { snapCenterToCursor } from '@dnd-kit/modifiers';
-import React, { useCallback, useMemo } from 'react';
+import { sortableKeyboardCoordinates } from '@dnd-kit/sortable';
+import React, { useCallback } from 'react';
 
 /**
  * Props for the FormBuilderDndContext component
@@ -47,14 +51,15 @@ export function FormBuilderDndContext({
   onDragCancel,
   onFormBuilderEvent,
 }: FormBuilderDndContextProps) {
-  // Auto-detect device type for optimized sensors
-  const isMobile = useMemo(() => isMobileDevice(), []);
+  // Use default sensors temporarily for testing
+  const mouseSensor = useSensor(MouseSensor);
+  const touchSensor = useSensor(TouchSensor);
 
-  // Create adaptive sensors based on device type
-  const sensors = useFormBuilderSensors();
+  const keyboardSensor = useSensor(KeyboardSensor, {
+    coordinateGetter: sortableKeyboardCoordinates,
+  });
 
-  // Create adaptive collision detection
-  const collisionDetection = useMemo(() => getAdaptiveCollisionDetection(isMobile), [isMobile]);
+  const sensors = useSensors(mouseSensor, touchSensor, keyboardSensor);
 
   /**
    * Extract drag data from the drag event
@@ -90,7 +95,10 @@ export function FormBuilderDndContext({
 
       // Validate drop operation
       if (dropData?.accepts && dragData.elementType) {
-        const isAccepted = dropData.accepts.includes(dragData.elementType);
+        const accepts = dropData.accepts;
+        const isAccepted =
+          accepts === 'all' || (Array.isArray(accepts) && accepts.includes(dragData.elementType));
+
         if (!isAccepted) {
           return {
             success: false,
@@ -136,7 +144,9 @@ export function FormBuilderDndContext({
    */
   const handleDragStart = useCallback(
     (event: DragStartEvent) => {
+      console.log('🟢 DRAG START DETECTED!', event.active.id);
       const dragData = extractDragData(event);
+      console.log('🟢 Drag data:', dragData);
 
       // Emit event
       emitEvent('element-selected', event.active.id, dragData.element);
@@ -176,7 +186,14 @@ export function FormBuilderDndContext({
   const handleDragEnd = useCallback(
     (event: DragEndEvent) => {
       const { active, over } = event;
+      console.log('🔵 DnD Context handleDragEnd:', {
+        activeId: active.id,
+        overId: over?.id,
+        overData: over?.data?.current,
+      });
+
       const result = createDropResult(event);
+      console.log('🔵 Drop result:', result);
 
       // Remove visual feedback
       document.body.classList.remove('dragging');
@@ -214,51 +231,15 @@ export function FormBuilderDndContext({
   return (
     <DndContext
       sensors={sensors}
-      collisionDetection={collisionDetection}
-      modifiers={[snapCenterToCursor]}
+      collisionDetection={closestCenter}
       onDragStart={handleDragStart}
       onDragMove={handleDragMove}
       onDragOver={handleDragOver}
       onDragEnd={handleDragEnd}
-      onDragCancel={handleDragCancel}
-      accessibility={{
-        announcements: {
-          onDragStart({ active }) {
-            const dragData = extractDragData({ active } as DragStartEvent);
-            return `Started dragging ${dragData.elementType || 'element'} ${active.id}.`;
-          },
-          onDragOver({ active, over }) {
-            if (over) {
-              return `Dragging ${active.id} over droppable area ${over.id}.`;
-            }
-            return `Dragging ${active.id}.`;
-          },
-          onDragEnd({ active, over }) {
-            if (over) {
-              return `Dropped ${active.id} on droppable area ${over.id}.`;
-            }
-            return `Dragging ${active.id} was cancelled.`;
-          },
-          onDragCancel({ active }) {
-            return `Dragging ${active.id} was cancelled.`;
-          },
-        },
-      }}>
+      onDragCancel={handleDragCancel}>
       {children}
     </DndContext>
   );
-}
-
-/**
- * Hook to use the form builder DnD context
- * Provides access to drag and drop state and utilities
- */
-export function useFormBuilderDnd() {
-  // This can be extended with additional utilities
-  // For now, we'll just provide the context functions
-  return {
-    isMobile: isMobileDevice(),
-  };
 }
 
 /**

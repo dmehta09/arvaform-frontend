@@ -33,6 +33,8 @@ interface UseFormBuilderReturn {
   selectedElementId: UniqueIdentifier | undefined;
   isDragging: boolean;
   canvasSize: CanvasSize;
+  zoom: number;
+  showGrid: boolean;
 
   // Element operations
   addElement: (elementType: FormElementType, position: ElementPosition) => FormElement;
@@ -49,6 +51,7 @@ interface UseFormBuilderReturn {
   // Canvas operations
   setCanvasSize: (size: Partial<CanvasSize>) => void;
   setZoom: (zoom: number) => void;
+  toggleGrid: () => void;
   resetCanvas: () => void;
 
   // History operations
@@ -105,6 +108,7 @@ function createInitialState(config: UseFormBuilderConfig): FormBuilderState {
     dropZones: [],
     canvasSize,
     zoom: 1,
+    showGrid: true,
     history: {
       past: [],
       present: {} as FormBuilderState, // Will be set after creation
@@ -264,25 +268,27 @@ export function useFormBuilder(config: UseFormBuilderConfig): UseFormBuilderRetu
       const elementToDuplicate = state.elements.find((el) => el.id === elementId);
       if (!elementToDuplicate) return null;
 
-      const duplicatedElement: FormElement = {
+      const newElement: FormElement = {
         ...elementToDuplicate,
         id: generateElementId(),
-        label: `${elementToDuplicate.label} (Copy)`,
         position: {
           ...elementToDuplicate.position,
-          x: elementToDuplicate.position.x + 20,
-          y: elementToDuplicate.position.y + 20,
           order: elementToDuplicate.position.order + 1,
         },
       };
 
-      updateStateWithHistory((prevState) => ({
-        ...prevState,
-        elements: [...prevState.elements, duplicatedElement],
-        selectedElementId: duplicatedElement.id,
-      }));
+      updateStateWithHistory((prevState) => {
+        const index = prevState.elements.findIndex((el) => el.id === elementId);
+        const newElements = [...prevState.elements];
+        newElements.splice(index + 1, 0, newElement);
+        return {
+          ...prevState,
+          elements: newElements,
+          selectedElementId: newElement.id,
+        };
+      });
 
-      return duplicatedElement;
+      return newElement;
     },
     [state.elements, updateStateWithHistory],
   );
@@ -336,6 +342,16 @@ export function useFormBuilder(config: UseFormBuilderConfig): UseFormBuilderRetu
   }, []);
 
   /**
+   * Toggle grid visibility
+   */
+  const toggleGrid = useCallback(() => {
+    setState((prevState) => ({
+      ...prevState,
+      showGrid: !prevState.showGrid,
+    }));
+  }, []);
+
+  /**
    * Reset canvas to initial state
    */
   const resetCanvas = useCallback(() => {
@@ -345,6 +361,7 @@ export function useFormBuilder(config: UseFormBuilderConfig): UseFormBuilderRetu
       selectedElementId: undefined,
       canvasSize: DEFAULT_CANVAS_SIZE,
       zoom: 1,
+      showGrid: true,
     }));
   }, [updateStateWithHistory]);
 
@@ -489,6 +506,8 @@ export function useFormBuilder(config: UseFormBuilderConfig): UseFormBuilderRetu
     selectedElementId: state.selectedElementId,
     isDragging: state.isDragging,
     canvasSize: state.canvasSize,
+    zoom: state.zoom,
+    showGrid: state.showGrid,
 
     // Element operations
     addElement,
@@ -505,6 +524,7 @@ export function useFormBuilder(config: UseFormBuilderConfig): UseFormBuilderRetu
     // Canvas operations
     setCanvasSize,
     setZoom,
+    toggleGrid,
     resetCanvas,
 
     // History operations

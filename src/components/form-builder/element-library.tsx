@@ -13,8 +13,8 @@ import { ElementCard } from './element-card';
 interface ElementLibraryProps {
   className?: string;
   searchPlaceholder?: string;
-  onElementClick?: (elementType: string) => void;
-  onElementDoubleClick?: (elementType: string) => void;
+  // onElementClick?: (elementType: string) => void;
+  // onElementDoubleClick?: (elementType: string) => void;
 }
 
 /**
@@ -54,8 +54,8 @@ function SimpleElementSearch({
 export function ElementLibrary({
   className = '',
   searchPlaceholder = 'Search elements...',
-  onElementClick,
-  onElementDoubleClick,
+  // onElementClick,
+  // onElementDoubleClick,
 }: ElementLibraryProps) {
   // Search state
   const [searchQuery, setSearchQuery] = useState('');
@@ -210,8 +210,8 @@ export function ElementLibrary({
                           key={elementConfig.type}
                           config={elementConfig}
                           size="medium"
-                          onClick={() => onElementClick?.(elementConfig.type)}
-                          onDoubleClick={() => onElementDoubleClick?.(elementConfig.type)}
+                          // onClick={() => onElementClick?.(elementConfig.type)}
+                          // onDoubleClick={() => onElementDoubleClick?.(elementConfig.type)}
                           className="w-full"
                         />
                       ))}

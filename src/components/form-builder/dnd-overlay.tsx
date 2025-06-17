@@ -3,7 +3,6 @@
 import { cn } from '@/lib/utils';
 import { FormElement, FormElementType } from '@/types/form-builder.types';
 import { DragOverlay, defaultDropAnimationSideEffects } from '@dnd-kit/core';
-import { snapCenterToCursor } from '@dnd-kit/modifiers';
 import { CSS } from '@dnd-kit/utilities';
 import React from 'react';
 
@@ -37,10 +36,7 @@ export function FormBuilderDragOverlay({
   };
 
   return (
-    <DragOverlay
-      modifiers={[snapCenterToCursor]}
-      dropAnimation={dropAnimation}
-      className="drag-overlay">
+    <DragOverlay dropAnimation={dropAnimation} className="drag-overlay">
       {(activeElement || activeElementType) && (
         <DragPreview
           element={activeElement}

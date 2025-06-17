@@ -4,7 +4,6 @@ import { cn } from '@/lib/utils';
 import { ElementConfig } from '@/types/form-elements.types';
 import { useDraggable } from '@dnd-kit/core';
 import { CSS } from '@dnd-kit/utilities';
-import React from 'react';
 
 /**
  * Props for the ElementCard component
@@ -14,8 +13,8 @@ interface ElementCardProps {
   className?: string;
   showDescription?: boolean;
   size?: 'small' | 'medium' | 'large';
-  onClick?: (config: ElementConfig) => void;
-  onDoubleClick?: (config: ElementConfig) => void;
+  // onClick?: (config: ElementConfig) => void;
+  // onDoubleClick?: (config: ElementConfig) => void;
 }
 
 /**
@@ -27,9 +26,11 @@ export function ElementCard({
   className = '',
   showDescription = true,
   size = 'medium',
-  onClick,
-  onDoubleClick,
+  // onClick,
+  // onDoubleClick,
 }: ElementCardProps) {
+  console.log('🎯 ElementCard render:', config.type);
+
   const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({
     id: `element-${config.type}`,
     data: {
@@ -37,6 +38,13 @@ export function ElementCard({
       source: 'library',
       config,
     },
+  });
+
+  console.log('🎯 useDraggable state:', {
+    isDragging,
+    hasListeners: !!listeners,
+    listenersKeys: listeners ? Object.keys(listeners) : 'none',
+    attributes: attributes ? Object.keys(attributes) : 'none',
   });
 
   // Calculate card styles based on size
@@ -82,18 +90,18 @@ export function ElementCard({
   /**
    * Handle card click
    */
-  const handleClick = (event: React.MouseEvent) => {
-    event.preventDefault();
-    onClick?.(config);
-  };
+  // const handleClick = (event: React.MouseEvent) => {
+  //   event.preventDefault();
+  //   onClick?.(config);
+  // };
 
   /**
    * Handle card double click
    */
-  const handleDoubleClick = (event: React.MouseEvent) => {
-    event.preventDefault();
-    onDoubleClick?.(config);
-  };
+  // const handleDoubleClick = (event: React.MouseEvent) => {
+  //   event.preventDefault();
+  //   onDoubleClick?.(config);
+  // };
 
   return (
     <div
@@ -102,8 +110,12 @@ export function ElementCard({
       className={cardClasses}
       data-element-type={config.type}
       data-testid={`element-card-${config.type}`}
-      onClick={handleClick}
-      onDoubleClick={handleDoubleClick}
+      data-draggable="true"
+      onMouseDown={(e) => {
+        console.log('🐭 Mouse down on ElementCard:', config.type, e);
+      }}
+      // onClick={handleClick}
+      // onDoubleClick={handleDoubleClick}
       {...attributes}
       {...listeners}>
       {/* Premium badge */}
@@ -196,6 +208,7 @@ export function CompactElementCard({ config, className = '', onClick }: CompactE
     <div
       ref={setNodeRef}
       style={style}
+      data-draggable="true"
       className={cn(
         'compact-element-card',
         'flex items-center p-2 bg-white border border-gray-200 rounded-md',

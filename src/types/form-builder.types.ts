@@ -85,6 +85,7 @@ export interface FormBuilderState {
   dropZones: DropZone[];
   canvasSize: CanvasSize;
   zoom: number;
+  showGrid: boolean;
   history: FormBuilderHistory;
 }
 

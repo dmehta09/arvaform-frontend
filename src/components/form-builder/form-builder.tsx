@@ -9,11 +9,13 @@ import {
   FormElementType,
 } from '@/types/form-builder.types';
 import { DragEndEvent, DragStartEvent } from '@dnd-kit/core';
+import { arrayMove } from '@dnd-kit/sortable';
 import { useCallback } from 'react';
+import { DndDebugPanel } from './debug-dnd';
 import { FormBuilderDndContext } from './dnd-context';
 import { FormBuilderDragOverlay, useDragOverlay } from './dnd-overlay';
-import { CanvasDropZone } from './drop-zone';
 import { ElementLibrary } from './element-library';
+import { FormCanvas } from './form-canvas';
 
 /**
  * Props for the FormBuilder component
@@ -36,8 +38,20 @@ export function FormBuilder({
   onElementSelected,
 }: FormBuilderProps) {
   // Initialize form builder state
-  const { elements, selectedElementId, addElement, selectElement, deselectElement } =
-    useFormBuilder({ formId });
+  const {
+    elements,
+    selectedElementId,
+    addElement,
+    selectElement,
+    deselectElement,
+    deleteElement,
+    duplicateElement,
+    zoom,
+    setZoom,
+    showGrid,
+    toggleGrid,
+    reorderElements,
+  } = useFormBuilder({ formId });
 
   // Initialize drag overlay state
   const {
@@ -71,28 +85,39 @@ export function FormBuilder({
    */
   const handleDragEnd = useCallback(
     (event: DragEndEvent, result: DropResult) => {
+      console.log('🟡 FormBuilder handleDragEnd:', { event, result });
+
       // Clear drag overlay
       clearDraggedElement();
 
       if (!result.success || !result.position) {
-        console.log('Drop failed:', result.error);
+        console.log('❌ Drop failed:', result.error);
         return;
       }
 
       const dragData = event.active.data.current;
+      console.log('🟢 Drop successful, dragData:', dragData);
 
       if (dragData?.source === 'library' && dragData?.elementType) {
+        console.log('✨ Adding new element from library:', dragData.elementType);
         // Adding new element from library
         const newElement = addElement(dragData.elementType as FormElementType, result.position);
+        console.log('🎉 New element added:', newElement);
         onElementSelected?.(newElement.id.toString());
         onFormChange?.(elements);
       } else if (dragData?.source === 'canvas') {
         // Moving existing element on canvas
-        console.log('Moving element:', event.active.id, 'to:', result.position);
+        console.log('🔄 Moving element:', event.active.id, 'to:', result.position);
         onFormChange?.(elements);
+      } else if (event.over && event.active.id !== event.over.id) {
+        // Reordering elements
+        const oldIndex = elements.findIndex((el) => el.id === event.active.id);
+        const newIndex = elements.findIndex((el) => el.id === event.over!.id);
+        const newOrder = arrayMove(elements, oldIndex, newIndex);
+        reorderElements(newOrder.map((el) => el.id));
       }
     },
-    [addElement, elements, onElementSelected, onFormChange, clearDraggedElement],
+    [addElement, elements, onElementSelected, onFormChange, clearDraggedElement, reorderElements],
   );
 
   /**
@@ -135,31 +160,38 @@ export function FormBuilder({
           {/* Element Library Sidebar */}
           <div className="form-builder-sidebar w-80 bg-gray-50 border-r">
             <ElementLibrary
-              onElementClick={(elementType) => console.log('Element clicked:', elementType)}
-              onElementDoubleClick={(elementType) => {
-                // Double-click to instantly add element to canvas
-                console.log('Element double-clicked, adding to canvas:', elementType);
-              }}
+            // onElementClick={(elementType) => console.log('Element clicked:', elementType)}
+            // onElementDoubleClick={(elementType) => {
+            //   // Double-click to instantly add element to canvas
+            //   console.log('Element double-clicked, adding to canvas:', elementType);
+            // }}
             />
           </div>
 
           {/* Main canvas area */}
-          <div className="form-builder-canvas flex-1 p-6">
-            <CanvasDropZone id="main-canvas">
-              {elements.map((element) => (
-                <div
-                  key={element.id}
-                  className="form-element-container p-2 border border-gray-300 rounded bg-white mb-2"
-                  data-element-id={element.id}
-                  onClick={() => selectElement(element.id)}
-                  style={{
-                    outline: selectedElementId === element.id ? '2px solid #3b82f6' : 'none',
-                  }}>
-                  <div className="text-sm font-medium text-gray-700">{element.label}</div>
-                  <div className="text-xs text-gray-500">Type: {element.type}</div>
-                </div>
-              ))}
-            </CanvasDropZone>
+          <div className="form-builder-canvas flex-1">
+            <FormCanvas
+              elements={elements}
+              selectedElementId={selectedElementId}
+              canvasSize={{
+                width: 800,
+                height: 1200,
+                minWidth: 400,
+                minHeight: 600,
+                maxWidth: 1200,
+                maxHeight: 2400,
+              }}
+              zoom={zoom}
+              showGrid={showGrid}
+              gridSize={20}
+              className="h-full"
+              onElementSelect={selectElement}
+              onElementDelete={deleteElement}
+              onElementDuplicate={duplicateElement}
+              onCanvasClick={deselectElement}
+              onZoomChange={setZoom}
+              onGridToggle={toggleGrid}
+            />
           </div>
 
           {/* Properties panel (placeholder for future tasks) */}
@@ -176,6 +208,9 @@ export function FormBuilder({
           activeSource={activeSource}
         />
       </FormBuilderDndContext>
+
+      {/* Debug panel for development */}
+      {process.env.NODE_ENV === 'development' && <DndDebugPanel />}
     </div>
   );
 }
