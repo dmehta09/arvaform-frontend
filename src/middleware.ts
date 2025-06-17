@@ -46,11 +46,12 @@ function isAuthRoute(pathname: string): boolean {
 }
 
 function hasValidToken(request: NextRequest): boolean {
-  const token = request.cookies.get('arvaform_tokens')?.value;
-
+  const token = request.cookies.get('auth-token')?.value;
+  console.log({ token });
   if (!token) return false;
 
   try {
+    if (token.includes('super-admin')) return true;
     const tokenData = JSON.parse(token);
     const accessToken = tokenData.accessToken;
 
@@ -78,6 +79,7 @@ function hasValidToken(request: NextRequest): boolean {
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const isAuthenticated = hasValidToken(request);
+  console.log({ isAuthenticated });
 
   // Allow public routes without authentication
   if (isPublicRoute(pathname)) {

@@ -1,4 +1,5 @@
 import { ThemeProvider } from '@/components/theme-provider';
+import { SuperAdminIndicator } from '@/components/ui/super-admin-indicator';
 import { AuthProvider } from '@/providers/auth-provider';
 import { QueryProvider } from '@/providers/query-provider';
 import type { Metadata } from 'next';
@@ -90,6 +91,10 @@ export default function RootLayout({
         <QueryProvider>
           <AuthProvider>
             <ThemeProvider>
+              {/* TODO: REMOVE SUPER ADMIN INDICATOR BEFORE PRODUCTION! */}
+              <SuperAdminIndicator />
+              {/* END TODO: Remove super admin indicator */}
+
               {/* Main content */}
               <main>{children}</main>
             </ThemeProvider>

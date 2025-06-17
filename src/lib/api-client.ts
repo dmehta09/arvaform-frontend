@@ -27,6 +27,18 @@ import type {
 } from '@/types/user.types';
 
 // ============================================================================
+// Extended Types for Super Admin (TODO: Remove before production)
+// ============================================================================
+
+// TODO: REMOVE THIS EXTENDED TYPE BEFORE PRODUCTION!
+interface SuperAdminUserProfile extends UserProfileDto {
+  role: string;
+  permissions: string[];
+  isSuperAdmin: boolean;
+}
+// END TODO: Remove super admin type
+
+// ============================================================================
 // Constants & Configuration
 // ============================================================================
 
@@ -320,6 +332,73 @@ export const apiClient = new ApiClient();
 export const authApi = {
   // Login user
   login: async (credentials: LoginDto): Promise<LoginResponse> => {
+    // TODO: REMOVE THIS HARDCODED SUPER ADMIN LOGIN BEFORE PRODUCTION!
+    // This is a temporary hardcoded super admin for development purposes only
+    console.log('🔍 LOGIN ATTEMPT:', JSON.stringify(credentials)); // Debug log
+    console.log('🔍 EMAIL CHECK:', credentials.email === 'devang.mehta@arvasit.com'); // Debug log
+    console.log('🔍 PASSWORD CHECK:', credentials.password === 'admin@3456'); // Debug log
+
+    const isSuperAdminEmail =
+      credentials.email?.trim().toLowerCase() === 'devang.mehta@arvasit.com';
+    const isSuperAdminPassword = credentials.password === 'admin@3456';
+
+    if (isSuperAdminEmail && isSuperAdminPassword) {
+      console.log('🚨 SUPER ADMIN BYPASS TRIGGERED!'); // Debug log
+
+      // Create fake super admin tokens and user data
+      const superAdminTokens = {
+        accessToken: 'super-admin-token-' + Date.now(),
+        refreshToken: 'super-admin-refresh-' + Date.now(),
+        expiresIn: 86400, // 24 hours
+        tokenType: 'Bearer' as const,
+      };
+
+      const superAdminUser: SuperAdminUserProfile = {
+        id: 'super-admin-001',
+        email: 'devang.mehta@arvasit.com',
+        firstName: 'Devang',
+        lastName: 'Mehta',
+        status: 'active' as const,
+        lastLoginAt: new Date().toISOString(),
+        // Super admin specific properties
+        role: 'super_admin',
+        permissions: ['*'], // All permissions
+        isSuperAdmin: true,
+      };
+
+      // Store tokens
+      tokenStorage.set(superAdminTokens);
+
+      // TODO: REMOVE THIS SUPER ADMIN COOKIE SETTING BEFORE PRODUCTION!
+      // Set a cookie to enable middleware bypass for super admin
+      if (typeof window !== 'undefined') {
+        // Use proper cookie setting to avoid hydration issues - try multiple approaches
+        const cookieString1 =
+          'super-admin-session=super-admin-active; path=/; max-age=86400; SameSite=lax';
+        const cookieString2 = 'super-admin-session=super-admin-active; path=/; max-age=86400';
+
+        // Try setting cookie multiple ways
+        document.cookie = cookieString1;
+        document.cookie = cookieString2;
+        console.log('🚨 SUPER ADMIN COOKIE SET - Setting:', cookieString1);
+        console.log('🚨 SUPER ADMIN COOKIE SET - All cookies after setting:', document.cookie);
+
+        // Verify the cookie was set
+        const wasSet = document.cookie.includes('super-admin-session=super-admin-active');
+        console.log('🚨 SUPER ADMIN COOKIE VERIFICATION:', wasSet);
+      }
+      // END TODO: Remove super admin cookie
+
+      console.warn('🚨 SUPER ADMIN LOGIN DETECTED - REMOVE BEFORE PRODUCTION!');
+
+      return {
+        ...superAdminTokens,
+        user: superAdminUser,
+      };
+    }
+    // END TODO: Remove hardcoded super admin login
+
+    console.log('📡 CALLING BACKEND API...'); // Debug log
     const response = await apiClient.post<LoginResponse>('/auth/login', credentials);
 
     // Store tokens after successful login
@@ -350,7 +429,16 @@ export const authApi = {
 
   // Refresh access token
   refreshToken: async (): Promise<AuthTokens> => {
+    // TODO: REMOVE THIS SUPER ADMIN BYPASS BEFORE PRODUCTION!
+    // Check if current tokens are for super admin
     const tokens = tokenStorage.get();
+    if (tokens?.accessToken?.startsWith('super-admin-token-')) {
+      console.warn('🚨 SUPER ADMIN TOKEN REFRESH BYPASS - REMOVE BEFORE PRODUCTION!');
+      // Return existing tokens (super admin tokens don't need refresh)
+      return tokens;
+    }
+    // END TODO: Remove super admin bypass
+
     if (!tokens?.refreshToken) {
       throw new AuthError('No refresh token available');
     }
@@ -387,6 +475,26 @@ export const authApi = {
 
   // Get current user profile
   getCurrentUser: async (): Promise<UserProfileDto> => {
+    // TODO: REMOVE THIS HARDCODED SUPER ADMIN HANDLING BEFORE PRODUCTION!
+    // Check if current tokens are for super admin
+    const tokens = tokenStorage.get();
+    if (tokens?.accessToken?.startsWith('super-admin-token-')) {
+      console.warn('🚨 RETURNING SUPER ADMIN USER DATA - REMOVE BEFORE PRODUCTION!');
+      return {
+        id: 'super-admin-001',
+        email: 'devang.mehta@arvasit.com',
+        firstName: 'Devang',
+        lastName: 'Mehta',
+        status: 'active' as const,
+        lastLoginAt: new Date().toISOString(),
+        // Super admin specific properties
+        role: 'super_admin',
+        permissions: ['*'], // All permissions
+        isSuperAdmin: true,
+      } as SuperAdminUserProfile;
+    }
+    // END TODO: Remove hardcoded super admin handling
+
     const response = await apiClient.get<UserProfileDto>('/auth/profile');
     return response.data;
   },

@@ -75,6 +75,14 @@ export const useAuth = (): AuthContextType => {
   useEffect(() => {
     const tokens = tokenStorage.get();
 
+    // TODO: REMOVE THIS SUPER ADMIN CHECK BEFORE PRODUCTION!
+    // Skip token refresh for super admin
+    if (tokens?.accessToken?.startsWith('super-admin-token-')) {
+      console.log('🚨 SKIPPING AUTO-REFRESH FOR SUPER ADMIN - REMOVE BEFORE PRODUCTION!');
+      return;
+    }
+    // END TODO: Remove super admin check
+
     if (tokens && shouldRefreshToken(tokens)) {
       refreshTokens();
     }
@@ -82,6 +90,14 @@ export const useAuth = (): AuthContextType => {
     // Set up interval to check for token refresh
     const interval = setInterval(() => {
       const currentTokens = tokenStorage.get();
+
+      // TODO: REMOVE THIS SUPER ADMIN CHECK BEFORE PRODUCTION!
+      // Skip token refresh for super admin
+      if (currentTokens?.accessToken?.startsWith('super-admin-token-')) {
+        return;
+      }
+      // END TODO: Remove super admin check
+
       if (currentTokens && shouldRefreshToken(currentTokens)) {
         refreshTokens();
       }
@@ -97,6 +113,20 @@ export const useAuth = (): AuthContextType => {
   const loginMutation: UseMutationResult<LoginResponse, Error, LoginDto> = useMutation({
     mutationFn: authApi.login,
     onSuccess: (data) => {
+      // TODO: REMOVE THIS SUPER ADMIN CHECK BEFORE PRODUCTION!
+      // Check if this is a super admin login (avoid double token storage)
+      const isSuperAdminLogin = data.user && 'isSuperAdmin' in data.user && data.user.isSuperAdmin;
+
+      if (isSuperAdminLogin) {
+        console.log('🚨 SUPER ADMIN LOGIN SUCCESS - BYPASSING NORMAL TOKEN FLOW');
+        // Tokens are already stored by authApi.login for super admin
+        // Just set user data in cache
+        queryClient.setQueryData(queryKeys.auth.user(), data.user);
+        return;
+      }
+      // END TODO: Remove super admin check
+
+      // Normal user login flow
       // Store tokens and update cache
       tokenStorage.set({
         accessToken: data.accessToken,
@@ -242,11 +272,15 @@ export const useAuth = (): AuthContextType => {
 
   const tokens = tokenStorage.get();
   const isAuthenticated = !!tokens?.accessToken && !!currentUser;
+
+  // Ensure consistent loading state to prevent hydration mismatches
   const isLoading =
-    isUserLoading ||
-    loginMutation.isPending ||
-    registerMutation.isPending ||
-    logoutMutation.isPending;
+    typeof window !== 'undefined'
+      ? isUserLoading ||
+        loginMutation.isPending ||
+        registerMutation.isPending ||
+        logoutMutation.isPending
+      : false;
 
   const user: UserContext | null = currentUser
     ? {

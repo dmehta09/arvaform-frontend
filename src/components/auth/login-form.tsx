@@ -4,10 +4,12 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { useAuth } from '@/hooks/use-auth';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { AlertCircle, Eye, EyeOff, Lock, Mail } from 'lucide-react';
 import Link from 'next/link';
-import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
 import { OAuthButtons } from './oauth-buttons';
@@ -30,8 +32,15 @@ interface LoginFormProps {
 
 export function LoginForm({ onSuccess, className }: LoginFormProps) {
   const [showPassword, setShowPassword] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [isHydrated, setIsHydrated] = useState(false);
+  const router = useRouter();
+  const { login, isLoading } = useAuth();
+
+  // Prevent hydration mismatch by ensuring client-side rendering after hydration
+  useEffect(() => {
+    setIsHydrated(true);
+  }, []);
 
   const {
     register,
@@ -45,24 +54,78 @@ export function LoginForm({ onSuccess, className }: LoginFormProps) {
 
   const onSubmit = async (data: LoginFormData) => {
     try {
-      setIsLoading(true);
       setError(null);
 
-      // TODO: Implement actual login API call
-      // This will be connected to the backend authentication in E1-T010
-      console.log('Login attempt:', { email: data.email });
+      console.log('🔍 LOGIN FORM SUBMIT:', data); // Debug log
 
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      // TODO: REMOVE SUPER ADMIN NOTICE BEFORE PRODUCTION!
+      if (data.email === 'devang.mehta@arvasit.com') {
+        console.warn('🚨 ATTEMPTING SUPER ADMIN LOGIN - REMOVE BEFORE PRODUCTION!');
+      }
+      // END TODO: Remove super admin notice
 
-      // Mock success response
+      console.log('📞 CALLING auth.login() hook...'); // Debug log
+      const result = await login(data);
+      console.log('✅ LOGIN SUCCESS:', result); // Debug log
+
       reset();
       onSuccess?.();
+
+      // TODO: REMOVE SUPER ADMIN REDIRECT LOGIC BEFORE PRODUCTION!
+      // Check if this is super admin login and handle redirect differently
+      const isSuperAdminLogin =
+        result.user && 'isSuperAdmin' in result.user && result.user.isSuperAdmin;
+
+      if (isSuperAdminLogin) {
+        console.log('🚨 SUPER ADMIN REDIRECT - Using window.location for immediate redirect');
+        // Small delay to ensure cookie is set before redirect
+        setTimeout(() => {
+          // Debug: Check if cookie is actually set
+          console.log('🔍 ALL COOKIES BEFORE REDIRECT:', document.cookie);
+          console.log('🔍 SUPER ADMIN COOKIE:', document.cookie.includes('super-admin-session'));
+
+          // Force redirect via super admin route to bypass middleware issues
+          console.log('🚀 ATTEMPTING SUPER ADMIN REDIRECT VIA INTERMEDIATE ROUTE...');
+
+          // Method 1: Use intermediate super admin route
+          console.log('🔄 Using super-admin-dashboard route...');
+          window.location.assign('/super-admin-dashboard');
+
+          // Method 2: Fallback after delay
+          setTimeout(() => {
+            if (
+              !window.location.pathname.includes('/dashboard') &&
+              !window.location.pathname.includes('/super-admin-dashboard')
+            ) {
+              console.log('🔄 First redirect failed, trying direct dashboard...');
+              window.location.href = '/dashboard';
+            }
+          }, 1000);
+
+          // Method 3: Ultimate fallback
+          setTimeout(() => {
+            if (
+              !window.location.pathname.includes('/dashboard') &&
+              !window.location.pathname.includes('/super-admin-dashboard')
+            ) {
+              console.log('🔄 All redirects failed, forcing page reload...');
+              window.location.replace('/dashboard');
+            }
+          }, 2000);
+        }, 300); // Increased delay to ensure cookie is set
+        return;
+      }
+      // END TODO: Remove super admin redirect logic
+
+      // Normal redirect for regular users
+      router.push('/dashboard');
     } catch (err) {
-      console.error('Login error:', err);
-      setError('Invalid email or password. Please try again.');
-    } finally {
-      setIsLoading(false);
+      console.error('❌ LOGIN ERROR:', err);
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError('Invalid email or password. Please try again.');
+      }
     }
   };
 
@@ -76,7 +139,7 @@ export function LoginForm({ onSuccess, className }: LoginFormProps) {
         </div>
 
         {/* OAuth Buttons */}
-        <OAuthButtons disabled={isLoading} />
+        <OAuthButtons disabled={isHydrated ? isLoading : false} />
 
         {/* Divider */}
         <div className="relative">
@@ -115,7 +178,7 @@ export function LoginForm({ onSuccess, className }: LoginFormProps) {
                 type="email"
                 placeholder="Enter your email"
                 className={`pl-10 h-11 ${errors.email ? 'border-red-500 focus:border-red-500' : ''}`}
-                disabled={isLoading}
+                disabled={isHydrated ? isLoading : false}
                 autoComplete="email"
                 aria-invalid={errors.email ? 'true' : 'false'}
                 aria-describedby={errors.email ? 'email-error' : undefined}
@@ -143,7 +206,7 @@ export function LoginForm({ onSuccess, className }: LoginFormProps) {
                 type={showPassword ? 'text' : 'password'}
                 placeholder="Enter your password"
                 className={`pl-10 pr-10 h-11 ${errors.password ? 'border-red-500 focus:border-red-500' : ''}`}
-                disabled={isLoading}
+                disabled={isHydrated ? isLoading : false}
                 autoComplete="current-password"
                 aria-invalid={errors.password ? 'true' : 'false'}
                 aria-describedby={errors.password ? 'password-error' : undefined}
@@ -152,7 +215,7 @@ export function LoginForm({ onSuccess, className }: LoginFormProps) {
                 type="button"
                 className="absolute right-3 top-1/2 transform -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300"
                 onClick={() => setShowPassword(!showPassword)}
-                disabled={isLoading}
+                disabled={isHydrated ? isLoading : false}
                 aria-label={showPassword ? 'Hide password' : 'Show password'}>
                 {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
               </button>
@@ -180,9 +243,9 @@ export function LoginForm({ onSuccess, className }: LoginFormProps) {
           <Button
             type="submit"
             className="w-full h-11 bg-blue-600 hover:bg-blue-700 dark:bg-blue-600 dark:hover:bg-blue-700 text-white font-medium"
-            disabled={isLoading || !isValid}
+            disabled={isHydrated ? isLoading || !isValid : !isValid}
             aria-label="Sign in to your account">
-            {isLoading ? (
+            {isHydrated && isLoading ? (
               <>
                 <div className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white" />
                 Signing in...
