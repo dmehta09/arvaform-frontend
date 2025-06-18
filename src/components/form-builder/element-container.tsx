@@ -1,7 +1,7 @@
 'use client';
 
 import { cn } from '@/lib/utils';
-import { FormElement } from '@/types/form-builder.types';
+import { ElementStyling, FormElement } from '@/types/form-builder.types';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import React, { useCallback, useMemo, useState } from 'react';
@@ -199,17 +199,31 @@ interface ElementPreviewProps {
 }
 
 function ElementPreview({ element }: ElementPreviewProps) {
+  // Convert element styling to CSS styles
+  const elementStyles = useMemo(
+    () => convertStylingToCSS(element.styling || {}),
+    [element.styling],
+  );
+
   const getPreviewContent = () => {
     switch (element.type) {
       case 'text':
       case 'email':
         return (
-          <div className="space-y-1">
+          <div className="space-y-1" style={elementStyles}>
             <label className="block text-sm font-medium text-gray-700">{element.label}</label>
             <input
               type={element.type}
               placeholder={element.placeholder}
               className="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-50"
+              style={{
+                backgroundColor: element.styling?.backgroundColor || undefined,
+                color: element.styling?.textColor || undefined,
+                borderColor: element.styling?.borderColor || undefined,
+                borderRadius: element.styling?.borderRadius || undefined,
+                fontSize: element.styling?.fontSize || undefined,
+                fontFamily: element.styling?.fontFamily || undefined,
+              }}
               disabled
             />
           </div>
@@ -217,12 +231,20 @@ function ElementPreview({ element }: ElementPreviewProps) {
 
       case 'textarea':
         return (
-          <div className="space-y-1">
+          <div className="space-y-1" style={elementStyles}>
             <label className="block text-sm font-medium text-gray-700">{element.label}</label>
             <textarea
               placeholder={element.placeholder}
               rows={3}
               className="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-50"
+              style={{
+                backgroundColor: element.styling?.backgroundColor || undefined,
+                color: element.styling?.textColor || undefined,
+                borderColor: element.styling?.borderColor || undefined,
+                borderRadius: element.styling?.borderRadius || undefined,
+                fontSize: element.styling?.fontSize || undefined,
+                fontFamily: element.styling?.fontFamily || undefined,
+              }}
               disabled
             />
           </div>
@@ -230,10 +252,18 @@ function ElementPreview({ element }: ElementPreviewProps) {
 
       case 'dropdown':
         return (
-          <div className="space-y-1">
+          <div className="space-y-1" style={elementStyles}>
             <label className="block text-sm font-medium text-gray-700">{element.label}</label>
             <select
               className="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-50"
+              style={{
+                backgroundColor: element.styling?.backgroundColor || undefined,
+                color: element.styling?.textColor || undefined,
+                borderColor: element.styling?.borderColor || undefined,
+                borderRadius: element.styling?.borderRadius || undefined,
+                fontSize: element.styling?.fontSize || undefined,
+                fontFamily: element.styling?.fontFamily || undefined,
+              }}
               disabled>
               <option>{element.placeholder || 'Select an option'}</option>
             </select>
@@ -242,31 +272,74 @@ function ElementPreview({ element }: ElementPreviewProps) {
 
       case 'checkbox':
         return (
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center space-x-2" style={elementStyles}>
             <input type="checkbox" className="rounded border-gray-300" disabled />
-            <label className="text-sm font-medium text-gray-700">{element.label}</label>
+            <label
+              className="text-sm font-medium text-gray-700"
+              style={{
+                color: element.styling?.textColor || undefined,
+                fontSize: element.styling?.fontSize || undefined,
+                fontFamily: element.styling?.fontFamily || undefined,
+              }}>
+              {element.label}
+            </label>
           </div>
         );
 
       case 'radio':
         return (
-          <div className="space-y-2">
-            <label className="block text-sm font-medium text-gray-700">{element.label}</label>
+          <div className="space-y-2" style={elementStyles}>
+            <label
+              className="block text-sm font-medium text-gray-700"
+              style={{
+                color: element.styling?.textColor || undefined,
+                fontSize: element.styling?.fontSize || undefined,
+                fontFamily: element.styling?.fontFamily || undefined,
+              }}>
+              {element.label}
+            </label>
             <div className="space-y-1">
               <div className="flex items-center space-x-2">
                 <input type="radio" name={`preview-${element.id}`} disabled />
-                <span className="text-sm text-gray-600">Option 1</span>
+                <span
+                  className="text-sm text-gray-600"
+                  style={{
+                    color: element.styling?.textColor || undefined,
+                    fontSize: element.styling?.fontSize || undefined,
+                    fontFamily: element.styling?.fontFamily || undefined,
+                  }}>
+                  Option 1
+                </span>
               </div>
               <div className="flex items-center space-x-2">
                 <input type="radio" name={`preview-${element.id}`} disabled />
-                <span className="text-sm text-gray-600">Option 2</span>
+                <span
+                  className="text-sm text-gray-600"
+                  style={{
+                    color: element.styling?.textColor || undefined,
+                    fontSize: element.styling?.fontSize || undefined,
+                    fontFamily: element.styling?.fontFamily || undefined,
+                  }}>
+                  Option 2
+                </span>
               </div>
             </div>
           </div>
         );
 
       default:
-        return <div className="text-sm text-gray-500 italic">{element.type} field preview</div>;
+        return (
+          <div
+            className="text-sm text-gray-500 italic"
+            style={{
+              ...elementStyles,
+              color: element.styling?.textColor || undefined,
+              fontSize: element.styling?.fontSize || undefined,
+              fontFamily: element.styling?.fontFamily || undefined,
+            }}>
+            {element.type} field preview
+          </div>
+        );
     }
   };
 
@@ -307,4 +380,51 @@ function ElementControls({ onDelete, onDuplicate }: ElementControlsProps) {
       </div>
     </div>
   );
+}
+
+/**
+ * Convert ElementStyling to CSS style object
+ */
+function convertStylingToCSS(styling: ElementStyling): React.CSSProperties {
+  const cssStyles: React.CSSProperties = {};
+
+  // Layout & Spacing
+  if (styling.width) cssStyles.width = styling.width;
+  if (styling.height) cssStyles.height = styling.height;
+
+  if (styling.margin) {
+    if (styling.margin.top) cssStyles.marginTop = styling.margin.top;
+    if (styling.margin.right) cssStyles.marginRight = styling.margin.right;
+    if (styling.margin.bottom) cssStyles.marginBottom = styling.margin.bottom;
+    if (styling.margin.left) cssStyles.marginLeft = styling.margin.left;
+  }
+
+  if (styling.padding) {
+    if (styling.padding.top) cssStyles.paddingTop = styling.padding.top;
+    if (styling.padding.right) cssStyles.paddingRight = styling.padding.right;
+    if (styling.padding.bottom) cssStyles.paddingBottom = styling.padding.bottom;
+    if (styling.padding.left) cssStyles.paddingLeft = styling.padding.left;
+  }
+
+  // Typography
+  if (styling.fontSize) cssStyles.fontSize = styling.fontSize;
+  if (styling.fontWeight) cssStyles.fontWeight = styling.fontWeight;
+  if (styling.fontFamily) cssStyles.fontFamily = styling.fontFamily;
+  if (styling.textAlign) cssStyles.textAlign = styling.textAlign;
+
+  // Colors
+  if (styling.backgroundColor) cssStyles.backgroundColor = styling.backgroundColor;
+  if (styling.textColor) cssStyles.color = styling.textColor;
+  if (styling.borderColor) cssStyles.borderColor = styling.borderColor;
+
+  // Borders & Radius
+  if (styling.borderWidth) cssStyles.borderWidth = styling.borderWidth;
+  if (styling.borderStyle) cssStyles.borderStyle = styling.borderStyle;
+  if (styling.borderRadius) cssStyles.borderRadius = styling.borderRadius;
+
+  // Effects
+  if (styling.boxShadow) cssStyles.boxShadow = styling.boxShadow;
+  if (styling.opacity !== undefined) cssStyles.opacity = styling.opacity;
+
+  return cssStyles;
 }
