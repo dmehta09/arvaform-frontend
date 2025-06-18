@@ -11,9 +11,11 @@ import {
   FormElementType,
   ValidationRule,
 } from '@/types/form-builder.types';
+import type { Theme } from '@/types/theme.types';
 import { DragEndEvent, DragStartEvent } from '@dnd-kit/core';
 import { arrayMove } from '@dnd-kit/sortable';
-import { useCallback, useState } from 'react';
+import { Palette } from 'lucide-react';
+import { useCallback, useEffect, useState } from 'react';
 import { DndDebugPanel } from './debug-dnd';
 import { FormBuilderDndContext } from './dnd-context';
 import { FormBuilderDragOverlay, useDragOverlay } from './dnd-overlay';
@@ -21,6 +23,7 @@ import { ElementLibrary } from './element-library';
 import { ElementProperties as ElementPropertiesComponent } from './element-properties';
 import { FormCanvas } from './form-canvas';
 import { FormPreview } from './form-preview';
+import { ThemePanel } from './theme-panel';
 
 /**
  * Props for the FormBuilder component
@@ -50,6 +53,10 @@ export function FormBuilder({
   const [previewTheme, setPreviewTheme] = useState<'light' | 'dark'>('light');
   const [previewMode, setPreviewMode] = useState<'static' | 'interactive'>('interactive');
   const [isFullscreen, setIsFullscreen] = useState(false);
+
+  // Theme panel state
+  const [isThemePanelOpen, setIsThemePanelOpen] = useState(false);
+  const [currentTheme, setCurrentTheme] = useState<Theme | null>(null);
 
   // Initialize form builder state
   const {
@@ -169,6 +176,55 @@ export function FormBuilder({
     [selectElement, deselectElement, onElementSelected],
   );
 
+  /**
+   * Handle theme panel toggle
+   */
+  const handleThemeToggle = useCallback(() => {
+    setIsThemePanelOpen(!isThemePanelOpen);
+  }, [isThemePanelOpen]);
+
+  /**
+   * Handle theme changes
+   */
+  const handleThemeChange = useCallback((theme: Theme) => {
+    setCurrentTheme(theme);
+  }, []);
+
+  // Effect to inject theme variables into the document head
+  useEffect(() => {
+    if (!currentTheme) return;
+
+    const themeStyleId = 'arva-form-theme-styles';
+    let styleTag = document.getElementById(themeStyleId) as HTMLStyleElement;
+
+    if (!styleTag) {
+      styleTag = document.createElement('style');
+      styleTag.id = themeStyleId;
+      document.head.appendChild(styleTag);
+    }
+
+    const generateCssVariables = (theme: Theme): string => {
+      const lines: string[] = [];
+      const tokens = theme.tokens;
+
+      const traverse = (obj: object, path: string[]) => {
+        Object.entries(obj).forEach(([key, value]) => {
+          const newPath = path.concat(key);
+          if (typeof value === 'string' || typeof value === 'number') {
+            lines.push(`--${newPath.join('-')}: ${value};`);
+          } else if (typeof value === 'object' && value !== null) {
+            traverse(value, newPath);
+          }
+        });
+      };
+
+      traverse(tokens, ['arva']); // Using a prefix 'arva' to avoid conflicts
+      return `:root {\n  ${lines.join('\n  ')}\n}`;
+    };
+
+    styleTag.innerHTML = generateCssVariables(currentTheme);
+  }, [currentTheme]);
+
   // Render preview mode
   if (isPreviewMode) {
     return (
@@ -211,6 +267,32 @@ export function FormBuilder({
 
           {/* Main canvas area */}
           <div className="form-builder-canvas flex-1">
+            {/* Canvas toolbar */}
+            <div className="canvas-toolbar bg-white border-b px-4 py-2 flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <span className="text-sm text-gray-600">Canvas Tools:</span>
+                <button
+                  onClick={toggleGrid}
+                  className={`px-3 py-1 text-xs rounded ${
+                    showGrid ? 'bg-blue-100 text-blue-700' : 'bg-gray-100 text-gray-600'
+                  }`}>
+                  Grid
+                </button>
+              </div>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={handleThemeToggle}
+                  className={`flex items-center gap-2 px-3 py-1 text-xs rounded transition-colors ${
+                    isThemePanelOpen
+                      ? 'bg-blue-100 text-blue-700 border border-blue-300'
+                      : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                  }`}>
+                  <Palette className="w-4 h-4" />
+                  Theme
+                </button>
+              </div>
+            </div>
+
             <FormCanvas
               elements={elements}
               selectedElementId={selectedElementId}
@@ -237,43 +319,52 @@ export function FormBuilder({
 
           {/* Properties panel */}
           <div className="form-builder-properties w-80 bg-white border-l">
-            <ElementPropertiesComponent
-              selectedElement={selectedElement}
-              onPropertyChange={(
-                elementId: string,
-                property: keyof ElementProperties,
-                value: unknown,
-              ) => {
-                const element = elements.find((el) => el.id.toString() === elementId);
-                if (element) {
-                  // Map property panel properties to FormElement structure
-                  switch (property) {
-                    case 'label':
-                    case 'placeholder':
-                    case 'required':
-                      // These are direct properties on FormElement
-                      updateElement(element.id, { [property]: value });
-                      break;
-                    case 'validation':
-                      // Validation is a direct property on FormElement
-                      updateElement(element.id, { validation: value as ValidationRule[] });
-                      break;
-                    case 'styling':
-                      // Styling is a direct property on FormElement
-                      updateElement(element.id, { styling: value as ElementStyling });
-                      break;
-                    case 'disabled':
-                    case 'description':
-                      // These go into the properties object
-                      updateElementProperty(element.id, property, value);
-                      break;
-                    default:
-                      // Fallback to properties object for other properties
-                      updateElementProperty(element.id, property, value);
+            {!isThemePanelOpen ? (
+              <ElementPropertiesComponent
+                selectedElement={selectedElement}
+                onPropertyChange={(
+                  elementId: string,
+                  property: keyof ElementProperties,
+                  value: unknown,
+                ) => {
+                  const element = elements.find((el) => el.id.toString() === elementId);
+                  if (element) {
+                    // Map property panel properties to FormElement structure
+                    switch (property) {
+                      case 'label':
+                      case 'placeholder':
+                      case 'required':
+                        // These are direct properties on FormElement
+                        updateElement(element.id, { [property]: value });
+                        break;
+                      case 'validation':
+                        // Validation is a direct property on FormElement
+                        updateElement(element.id, { validation: value as ValidationRule[] });
+                        break;
+                      case 'styling':
+                        // Styling is a direct property on FormElement
+                        updateElement(element.id, { styling: value as ElementStyling });
+                        break;
+                      case 'disabled':
+                      case 'description':
+                        // These go into the properties object
+                        updateElementProperty(element.id, property, value);
+                        break;
+                      default:
+                        // Fallback to properties object for other properties
+                        updateElementProperty(element.id, property, value);
+                    }
                   }
-                }
-              }}
-            />
+                }}
+              />
+            ) : (
+              <ThemePanel
+                isOpen={isThemePanelOpen}
+                onClose={() => setIsThemePanelOpen(false)}
+                onThemeChange={handleThemeChange}
+                className="h-full"
+              />
+            )}
           </div>
         </div>
 

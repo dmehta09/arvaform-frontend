@@ -211,11 +211,11 @@ function ElementPreview({ element }: ElementPreviewProps) {
       case 'email':
         return (
           <div className="space-y-1" style={elementStyles}>
-            <label className="block text-sm font-medium text-gray-700">{element.label}</label>
+            <label className="form-label block text-sm font-medium">{element.label}</label>
             <input
               type={element.type}
               placeholder={element.placeholder}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-50"
+              className="form-input w-full"
               style={{
                 backgroundColor: element.styling?.backgroundColor || undefined,
                 color: element.styling?.textColor || undefined,
@@ -232,11 +232,11 @@ function ElementPreview({ element }: ElementPreviewProps) {
       case 'textarea':
         return (
           <div className="space-y-1" style={elementStyles}>
-            <label className="block text-sm font-medium text-gray-700">{element.label}</label>
+            <label className="form-label block text-sm font-medium">{element.label}</label>
             <textarea
               placeholder={element.placeholder}
               rows={3}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-50"
+              className="form-input w-full resize-none"
               style={{
                 backgroundColor: element.styling?.backgroundColor || undefined,
                 color: element.styling?.textColor || undefined,
@@ -253,9 +253,9 @@ function ElementPreview({ element }: ElementPreviewProps) {
       case 'dropdown':
         return (
           <div className="space-y-1" style={elementStyles}>
-            <label className="block text-sm font-medium text-gray-700">{element.label}</label>
+            <label className="form-label block text-sm font-medium">{element.label}</label>
             <select
-              className="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-50"
+              className="form-input w-full"
               style={{
                 backgroundColor: element.styling?.backgroundColor || undefined,
                 color: element.styling?.textColor || undefined,
@@ -273,9 +273,16 @@ function ElementPreview({ element }: ElementPreviewProps) {
       case 'checkbox':
         return (
           <div className="flex items-center space-x-2" style={elementStyles}>
-            <input type="checkbox" className="rounded border-gray-300" disabled />
+            <input
+              type="checkbox"
+              className="rounded"
+              style={{
+                borderColor: element.styling?.borderColor || 'var(--arva-colors-border-primary)',
+              }}
+              disabled
+            />
             <label
-              className="text-sm font-medium text-gray-700"
+              className="form-label text-sm font-medium"
               style={{
                 color: element.styling?.textColor || undefined,
                 fontSize: element.styling?.fontSize || undefined,
@@ -290,7 +297,7 @@ function ElementPreview({ element }: ElementPreviewProps) {
         return (
           <div className="space-y-2" style={elementStyles}>
             <label
-              className="block text-sm font-medium text-gray-700"
+              className="form-label block text-sm font-medium"
               style={{
                 color: element.styling?.textColor || undefined,
                 fontSize: element.styling?.fontSize || undefined,
@@ -300,9 +307,17 @@ function ElementPreview({ element }: ElementPreviewProps) {
             </label>
             <div className="space-y-1">
               <div className="flex items-center space-x-2">
-                <input type="radio" name={`preview-${element.id}`} disabled />
+                <input
+                  type="radio"
+                  name={`preview-${element.id}`}
+                  style={{
+                    borderColor:
+                      element.styling?.borderColor || 'var(--arva-colors-border-primary)',
+                  }}
+                  disabled
+                />
                 <span
-                  className="text-sm text-gray-600"
+                  className="form-label text-sm"
                   style={{
                     color: element.styling?.textColor || undefined,
                     fontSize: element.styling?.fontSize || undefined,
@@ -312,9 +327,17 @@ function ElementPreview({ element }: ElementPreviewProps) {
                 </span>
               </div>
               <div className="flex items-center space-x-2">
-                <input type="radio" name={`preview-${element.id}`} disabled />
+                <input
+                  type="radio"
+                  name={`preview-${element.id}`}
+                  style={{
+                    borderColor:
+                      element.styling?.borderColor || 'var(--arva-colors-border-primary)',
+                  }}
+                  disabled
+                />
                 <span
-                  className="text-sm text-gray-600"
+                  className="form-label text-sm"
                   style={{
                     color: element.styling?.textColor || undefined,
                     fontSize: element.styling?.fontSize || undefined,
@@ -330,7 +353,7 @@ function ElementPreview({ element }: ElementPreviewProps) {
       default:
         return (
           <div
-            className="text-sm text-gray-500 italic"
+            className="form-label text-sm italic"
             style={{
               ...elementStyles,
               color: element.styling?.textColor || undefined,

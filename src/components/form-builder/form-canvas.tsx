@@ -209,7 +209,7 @@ export function FormCanvas({
         {/* Main drop zone for the canvas */}
         <CanvasDropZone
           id="main-canvas"
-          className="w-full min-h-full p-4"
+          className="form-builder-canvas w-full min-h-full p-4"
           showGrid={false} // Grid is handled by the canvas itself
           data={{
             accepts: 'all', // Accept all element types

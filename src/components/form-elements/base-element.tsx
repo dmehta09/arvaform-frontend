@@ -75,7 +75,7 @@ export const BaseElementWrapper = forwardRef<HTMLDivElement, BaseElementWrapperP
       <div
         ref={ref}
         className={cn(
-          'space-y-2',
+          'space-y-2 form-element',
           disabled && 'opacity-50 cursor-not-allowed',
           mode === 'builder' &&
             'border border-dashed border-gray-300 p-2 rounded-md hover:border-gray-400 transition-colors',
@@ -87,10 +87,14 @@ export const BaseElementWrapper = forwardRef<HTMLDivElement, BaseElementWrapperP
         <Label
           htmlFor={id}
           className={cn(
-            'text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70',
+            'text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 form-label',
             hasError && 'text-destructive',
             disabled && 'cursor-not-allowed opacity-70',
-          )}>
+          )}
+          style={{
+            color: 'var(--arva-colors-text-primary, hsl(var(--foreground)))',
+            fontFamily: 'var(--arva-typography-fontFamily-primary, sans-serif)',
+          }}>
           {label}
           {required && (
             <span
@@ -183,12 +187,20 @@ export function useBaseElement<T extends BaseElementProps>(props: T) {
     placeholder,
     disabled,
     className: cn(
-      'transition-colors',
+      'transition-colors form-input w-full p-2 border rounded-md',
       error && 'border-destructive focus:border-destructive',
       disabled && 'cursor-not-allowed opacity-50',
       className,
     ),
-    style,
+    style: {
+      ...style,
+      backgroundColor: 'var(--arva-colors-background-secondary, hsl(var(--background)))',
+      borderColor: 'var(--arva-colors-border-primary, hsl(var(--border)))',
+      borderRadius: 'var(--arva-borders-radius-md, hsl(var(--radius)))',
+      color: 'var(--arva-colors-text-primary, hsl(var(--foreground)))',
+      fontFamily: 'var(--arva-typography-fontFamily-primary, sans-serif)',
+      '--ring-color': 'var(--arva-colors-primary-500)', // For focus ring
+    } as React.CSSProperties,
     'aria-label': ariaLabel || label,
     'aria-describedby': generatedDescribedBy,
     'aria-invalid': Boolean(error),
