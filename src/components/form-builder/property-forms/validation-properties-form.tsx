@@ -124,7 +124,7 @@ const VALIDATION_RULE_CONFIGS: Record<
  * Form component for editing validation rules
  */
 export function ValidationPropertiesForm({
-  elementId: _elementId, // eslint-disable-line @typescript-eslint/no-unused-vars
+  elementId: _elementId,
   elementType,
   validationRules,
   onRulesChange,

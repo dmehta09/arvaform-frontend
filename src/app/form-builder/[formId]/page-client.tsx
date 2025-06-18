@@ -1,5 +1,6 @@
 'use client';
 
+import { usePreviewMode } from '@/app/form-builder/layout';
 import { FormBuilder } from '@/components/form-builder/form-builder';
 import type { FormElement } from '@/types/form-builder.types';
 
@@ -12,6 +13,9 @@ interface FormBuilderPageClientProps {
  * Handles event handlers and client-side interactions
  */
 export function FormBuilderPageClient({ formId }: FormBuilderPageClientProps) {
+  // Get preview mode from layout context
+  const { isPreviewMode } = usePreviewMode();
+
   /**
    * Handle form changes
    */
@@ -32,6 +36,7 @@ export function FormBuilderPageClient({ formId }: FormBuilderPageClientProps) {
     <FormBuilder
       formId={formId}
       className="h-full"
+      isPreviewMode={isPreviewMode}
       onFormChange={handleFormChange}
       onElementSelected={handleElementSelected}
     />

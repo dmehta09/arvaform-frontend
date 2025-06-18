@@ -13,13 +13,14 @@ import {
 } from '@/types/form-builder.types';
 import { DragEndEvent, DragStartEvent } from '@dnd-kit/core';
 import { arrayMove } from '@dnd-kit/sortable';
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
 import { DndDebugPanel } from './debug-dnd';
 import { FormBuilderDndContext } from './dnd-context';
 import { FormBuilderDragOverlay, useDragOverlay } from './dnd-overlay';
 import { ElementLibrary } from './element-library';
 import { ElementProperties as ElementPropertiesComponent } from './element-properties';
 import { FormCanvas } from './form-canvas';
+import { FormPreview } from './form-preview';
 
 /**
  * Props for the FormBuilder component
@@ -27,6 +28,7 @@ import { FormCanvas } from './form-canvas';
 interface FormBuilderProps {
   formId: string;
   className?: string;
+  isPreviewMode?: boolean;
   onFormChange?: (elements: FormElement[]) => void;
   onElementSelected?: (elementId: string) => void;
 }
@@ -34,13 +36,21 @@ interface FormBuilderProps {
 /**
  * Main FormBuilder component that provides the complete drag-and-drop
  * form building experience. Integrates DnD context, canvas, and state management.
+ * Now supports preview mode for testing forms.
  */
 export function FormBuilder({
   formId,
   className = '',
+  isPreviewMode = false,
   onFormChange,
   onElementSelected,
 }: FormBuilderProps) {
+  // Preview state management
+  const [previewDevice, setPreviewDevice] = useState('desktop1080');
+  const [previewTheme, setPreviewTheme] = useState<'light' | 'dark'>('light');
+  const [previewMode, setPreviewMode] = useState<'static' | 'interactive'>('interactive');
+  const [isFullscreen, setIsFullscreen] = useState(false);
+
   // Initialize form builder state
   const {
     elements,
@@ -159,6 +169,27 @@ export function FormBuilder({
     [selectElement, deselectElement, onElementSelected],
   );
 
+  // Render preview mode
+  if (isPreviewMode) {
+    return (
+      <div className={`form-builder-preview h-full ${className}`}>
+        <FormPreview
+          elements={elements}
+          selectedDevice={previewDevice}
+          theme={previewTheme}
+          mode={previewMode}
+          isFullscreen={isFullscreen}
+          onDeviceChange={setPreviewDevice}
+          onThemeChange={setPreviewTheme}
+          onModeChange={setPreviewMode}
+          onFullscreenToggle={() => setIsFullscreen(!isFullscreen)}
+          className="h-full"
+        />
+      </div>
+    );
+  }
+
+  // Render builder mode
   return (
     <div className={`form-builder ${className}`}>
       <FormBuilderDndContext
