@@ -170,7 +170,7 @@ function createPreviewElement(elementType: FormElementType): FormElement {
     placeholder: config.placeholder || 'Enter value...',
     required: false,
     position: { x: 0, y: 0, order: 0 },
-    validation: { required: false },
+    validation: [],
     styling: {},
     properties: {},
     ...config,

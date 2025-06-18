@@ -17,14 +17,31 @@ export const ELEMENT_CONFIGS: Record<FormElementType, ElementConfig> = {
       label: 'Text Input',
       placeholder: 'Enter text...',
       required: false,
-      validation: {
-        required: false,
-        minLength: 1,
-        maxLength: 255,
-      },
+      validation: [
+        {
+          id: 'required',
+          type: 'required',
+          enabled: false,
+          message: 'This field is required.',
+        },
+        {
+          id: 'minLength',
+          type: 'minLength',
+          value: 1,
+          enabled: true,
+          message: 'Must be at least 1 character.',
+        },
+        {
+          id: 'maxLength',
+          type: 'maxLength',
+          value: 255,
+          enabled: true,
+          message: 'Cannot exceed 255 characters.',
+        },
+      ],
       styling: {
         fontSize: '14px',
-        padding: '8px 12px',
+        padding: { top: '8px', right: '12px', bottom: '8px', left: '12px' },
       },
       properties: {
         autocomplete: 'off',
@@ -43,13 +60,23 @@ export const ELEMENT_CONFIGS: Record<FormElementType, ElementConfig> = {
       label: 'Email Address',
       placeholder: 'Enter your email address...',
       required: true,
-      validation: {
-        required: true,
-        pattern: '^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$',
-      },
+      validation: [
+        {
+          id: 'required',
+          type: 'required',
+          enabled: true,
+          message: 'Email is required.',
+        },
+        {
+          id: 'email',
+          type: 'email',
+          enabled: true,
+          message: 'Please enter a valid email address.',
+        },
+      ],
       styling: {
         fontSize: '14px',
-        padding: '8px 12px',
+        padding: { top: '8px', right: '12px', bottom: '8px', left: '12px' },
       },
       properties: {
         autocomplete: 'email',
@@ -67,13 +94,18 @@ export const ELEMENT_CONFIGS: Record<FormElementType, ElementConfig> = {
       label: 'Phone Number',
       placeholder: 'Enter your phone number...',
       required: false,
-      validation: {
-        required: false,
-        pattern: '^[\\+]?[1-9][\\d]{0,15}$',
-      },
+      validation: [
+        {
+          id: 'pattern',
+          type: 'pattern',
+          value: '^[\\+]?[1-9][\\d]{0,15}$',
+          enabled: true,
+          message: 'Please enter a valid phone number.',
+        },
+      ],
       styling: {
         fontSize: '14px',
-        padding: '8px 12px',
+        padding: { top: '8px', right: '12px', bottom: '8px', left: '12px' },
       },
       properties: {
         autocomplete: 'tel',
@@ -92,14 +124,13 @@ export const ELEMENT_CONFIGS: Record<FormElementType, ElementConfig> = {
       label: 'Number',
       placeholder: 'Enter a number...',
       required: false,
-      validation: {
-        required: false,
-        min: 0,
-        max: 999999,
-      },
+      validation: [
+        { id: 'min', type: 'min', value: 0, enabled: true },
+        { id: 'max', type: 'max', value: 999999, enabled: true },
+      ],
       styling: {
         fontSize: '14px',
-        padding: '8px 12px',
+        padding: { top: '8px', right: '12px', bottom: '8px', left: '12px' },
       },
       properties: {
         step: 1,
@@ -118,12 +149,10 @@ export const ELEMENT_CONFIGS: Record<FormElementType, ElementConfig> = {
       label: 'Date',
       placeholder: 'Select a date...',
       required: false,
-      validation: {
-        required: false,
-      },
+      validation: [],
       styling: {
         fontSize: '14px',
-        padding: '8px 12px',
+        padding: { top: '8px', right: '12px', bottom: '8px', left: '12px' },
       },
       properties: {
         format: 'YYYY-MM-DD',
@@ -144,14 +173,23 @@ export const ELEMENT_CONFIGS: Record<FormElementType, ElementConfig> = {
       label: 'Text Area',
       placeholder: 'Enter your response...',
       required: false,
-      validation: {
-        required: false,
-        minLength: 1,
-        maxLength: 2000,
-      },
+      validation: [
+        {
+          id: 'minLength',
+          type: 'minLength',
+          value: 1,
+          enabled: true,
+        },
+        {
+          id: 'maxLength',
+          type: 'maxLength',
+          value: 2000,
+          enabled: true,
+        },
+      ],
       styling: {
         fontSize: '14px',
-        padding: '8px 12px',
+        padding: { top: '8px', right: '12px', bottom: '8px', left: '12px' },
       },
       properties: {
         rows: 4,
@@ -172,12 +210,10 @@ export const ELEMENT_CONFIGS: Record<FormElementType, ElementConfig> = {
       label: 'Select Option',
       placeholder: 'Choose an option...',
       required: false,
-      validation: {
-        required: false,
-      },
+      validation: [],
       styling: {
         fontSize: '14px',
-        padding: '8px 12px',
+        padding: { top: '8px', right: '12px', bottom: '8px', left: '12px' },
       },
       properties: {
         options: [
@@ -200,9 +236,7 @@ export const ELEMENT_CONFIGS: Record<FormElementType, ElementConfig> = {
     defaultProps: {
       label: 'Choose One',
       required: false,
-      validation: {
-        required: false,
-      },
+      validation: [],
       styling: {
         fontSize: '14px',
       },
@@ -226,9 +260,7 @@ export const ELEMENT_CONFIGS: Record<FormElementType, ElementConfig> = {
     defaultProps: {
       label: 'Select All That Apply',
       required: false,
-      validation: {
-        required: false,
-      },
+      validation: [],
       styling: {
         fontSize: '14px',
       },
@@ -248,64 +280,67 @@ export const ELEMENT_CONFIGS: Record<FormElementType, ElementConfig> = {
     type: 'section',
     name: 'Section Header',
     description: 'Group related fields with a descriptive section header',
-    icon: '📂',
-    category: 'text-content',
-    tags: ['layout', 'section', 'grouping', 'organization'],
+    icon: '📦',
+    category: 'layout',
+    tags: ['layout', 'section', 'group', 'header'],
     defaultProps: {
       label: 'Section Title',
       required: false,
+      validation: [],
       styling: {
-        fontSize: '18px',
-        fontWeight: 'bold',
-        margin: '16px 0 8px 0',
+        padding: { top: '16px', right: '16px', bottom: '16px', left: '16px' },
+        backgroundColor: '#f9fafb',
+        borderRadius: '8px',
+        borderWidth: '1px',
+        borderColor: '#e5e7eb',
       },
       properties: {
-        description: 'Section description (optional)',
         collapsible: false,
-        collapsed: false,
+        defaultOpen: true,
+        subtitle: 'A short description for this section',
       },
     },
   },
   heading: {
     type: 'heading',
     name: 'Heading',
-    description: 'Form title or section heading with customizable styling',
-    icon: '📝',
+    description: 'Display a heading to structure your form',
+    icon: 'H1',
     category: 'text-content',
-    tags: ['heading', 'title', 'text', 'formatting'],
+    tags: ['text', 'heading', 'title', 'header'],
     defaultProps: {
-      label: 'Form Heading',
+      label: 'Main Heading',
       required: false,
+      validation: [],
       styling: {
         fontSize: '24px',
         fontWeight: 'bold',
-        margin: '0 0 16px 0',
+        margin: { top: '16px', bottom: '8px' },
       },
       properties: {
-        level: 2, // h2
-        subtitle: '',
+        level: 1, // h1
       },
     },
   },
   divider: {
     type: 'divider',
-    name: 'Divider Line',
-    description: 'Visual separator to organize form sections',
-    icon: '➖',
+    name: 'Divider',
+    description: 'Visually separate sections of your form',
+    icon: '—',
     category: 'layout',
-    tags: ['divider', 'separator', 'layout', 'spacing'],
+    tags: ['layout', 'divider', 'separator', 'line'],
     defaultProps: {
-      label: 'Divider',
+      label: '',
       required: false,
+      validation: [],
       styling: {
-        borderColor: '#e5e7eb',
-        borderWidth: 1,
-        margin: '16px 0',
+        borderWidth: '1px',
+        borderColor: '#e0e0e0',
+        margin: { top: '16px', bottom: '16px' },
       },
       properties: {
-        style: 'solid', // solid, dashed, dotted
-        thickness: 1,
-        spacing: 16,
+        orientation: 'horizontal',
+        style: 'solid',
       },
     },
   },

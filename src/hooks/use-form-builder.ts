@@ -48,6 +48,18 @@ interface UseFormBuilderReturn {
   deselectElement: () => void;
   getSelectedElement: () => FormElement | undefined;
 
+  // Property management operations
+  updateElementProperty: (elementId: UniqueIdentifier, property: string, value: unknown) => void;
+  updateElementValidation: (
+    elementId: UniqueIdentifier,
+    validation: Record<string, unknown>,
+  ) => void;
+  updateElementStyling: (elementId: UniqueIdentifier, styling: Record<string, unknown>) => void;
+  updateElementConditionalLogic: (
+    elementId: UniqueIdentifier,
+    logic: Record<string, unknown>,
+  ) => void;
+
   // Canvas operations
   setCanvasSize: (size: Partial<CanvasSize>) => void;
   setZoom: (zoom: number) => void;
@@ -197,9 +209,7 @@ export function useFormBuilder(config: UseFormBuilderConfig): UseFormBuilderRetu
         placeholder: `Enter ${elementType}...`,
         required: false,
         position,
-        validation: {
-          required: false,
-        },
+        validation: [],
         styling: {},
         properties: {},
       };
@@ -520,6 +530,51 @@ export function useFormBuilder(config: UseFormBuilderConfig): UseFormBuilderRetu
     selectElement,
     deselectElement,
     getSelectedElement,
+
+    // Property management operations
+    updateElementProperty: (elementId: UniqueIdentifier, property: string, value: unknown) => {
+      updateStateWithHistory((prevState) => ({
+        ...prevState,
+        elements: prevState.elements.map((element) =>
+          element.id === elementId
+            ? { ...element, properties: { ...element.properties, [property]: value } }
+            : element,
+        ),
+      }));
+    },
+    updateElementValidation: (elementId: UniqueIdentifier, validation: Record<string, unknown>) => {
+      updateStateWithHistory((prevState) => ({
+        ...prevState,
+        elements: prevState.elements.map((element) =>
+          element.id === elementId
+            ? { ...element, validation: { ...element.validation, ...validation } }
+            : element,
+        ),
+      }));
+    },
+    updateElementStyling: (elementId: UniqueIdentifier, styling: Record<string, unknown>) => {
+      updateStateWithHistory((prevState) => ({
+        ...prevState,
+        elements: prevState.elements.map((element) =>
+          element.id === elementId
+            ? { ...element, styling: { ...element.styling, ...styling } }
+            : element,
+        ),
+      }));
+    },
+    updateElementConditionalLogic: (
+      elementId: UniqueIdentifier,
+      logic: Record<string, unknown>,
+    ) => {
+      updateStateWithHistory((prevState) => ({
+        ...prevState,
+        elements: prevState.elements.map((element) =>
+          element.id === elementId
+            ? { ...element, conditionalLogic: { ...element.conditionalLogic, ...logic } }
+            : element,
+        ),
+      }));
+    },
 
     // Canvas operations
     setCanvasSize,

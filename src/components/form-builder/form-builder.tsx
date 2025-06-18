@@ -1,12 +1,15 @@
 'use client';
 
 import { useFormBuilder } from '@/hooks/use-form-builder';
+import { ElementProperties } from '@/types/element-properties.types';
 import {
   DragData,
   DropResult,
+  ElementStyling,
   FormBuilderEventPayload,
   FormElement,
   FormElementType,
+  ValidationRule,
 } from '@/types/form-builder.types';
 import { DragEndEvent, DragStartEvent } from '@dnd-kit/core';
 import { arrayMove } from '@dnd-kit/sortable';
@@ -15,6 +18,7 @@ import { DndDebugPanel } from './debug-dnd';
 import { FormBuilderDndContext } from './dnd-context';
 import { FormBuilderDragOverlay, useDragOverlay } from './dnd-overlay';
 import { ElementLibrary } from './element-library';
+import { ElementProperties as ElementPropertiesComponent } from './element-properties';
 import { FormCanvas } from './form-canvas';
 
 /**
@@ -51,6 +55,9 @@ export function FormBuilder({
     showGrid,
     toggleGrid,
     reorderElements,
+    updateElementProperty,
+    moveElement,
+    updateElement,
   } = useFormBuilder({ formId });
 
   // Initialize drag overlay state
@@ -62,6 +69,10 @@ export function FormBuilder({
     setDraggedElementType,
     clearDraggedElement,
   } = useDragOverlay();
+
+  const selectedElement = selectedElementId
+    ? elements.find((el) => el.id === selectedElementId) || null
+    : null;
 
   /**
    * Handle drag start event
@@ -81,49 +92,48 @@ export function FormBuilder({
   );
 
   /**
-   * Handle drag end event - core drop logic
+   * Handle drag end event
    */
   const handleDragEnd = useCallback(
     (event: DragEndEvent, result: DropResult) => {
-      console.log('🟡 FormBuilder handleDragEnd:', { event, result });
+      console.log('Drag ended:', { event, result });
 
       // Clear drag overlay
       clearDraggedElement();
 
-      if (!result.success || !result.position) {
-        console.log('❌ Drop failed:', result.error);
-        return;
+      // Handle successful drops
+      if (result.success) {
+        const dragData = event.active.data.current;
+
+        if (dragData?.source === 'library' && dragData?.elementType && result.position) {
+          // Adding new element from library
+          addElement(dragData.elementType as FormElementType, result.position);
+        } else if (dragData?.source === 'canvas' && result.position) {
+          // Moving existing element on canvas
+          const elementId = event.active.id;
+          moveElement(elementId, result.position);
+        } else if (event.over && event.active.id !== event.over.id) {
+          // Reordering elements
+          const oldIndex = elements.findIndex((el) => el.id === event.active.id);
+          const newIndex = elements.findIndex((el) => el.id === event.over!.id);
+          if (oldIndex !== -1 && newIndex !== -1) {
+            const newElements = arrayMove(elements, oldIndex, newIndex);
+            reorderElements(newElements.map((el) => el.id));
+          }
+        }
       }
 
-      const dragData = event.active.data.current;
-      console.log('🟢 Drop successful, dragData:', dragData);
-
-      if (dragData?.source === 'library' && dragData?.elementType) {
-        console.log('✨ Adding new element from library:', dragData.elementType);
-        // Adding new element from library
-        const newElement = addElement(dragData.elementType as FormElementType, result.position);
-        console.log('🎉 New element added:', newElement);
-        onElementSelected?.(newElement.id.toString());
-        onFormChange?.(elements);
-      } else if (dragData?.source === 'canvas') {
-        // Moving existing element on canvas
-        console.log('🔄 Moving element:', event.active.id, 'to:', result.position);
-        onFormChange?.(elements);
-      } else if (event.over && event.active.id !== event.over.id) {
-        // Reordering elements
-        const oldIndex = elements.findIndex((el) => el.id === event.active.id);
-        const newIndex = elements.findIndex((el) => el.id === event.over!.id);
-        const newOrder = arrayMove(elements, oldIndex, newIndex);
-        reorderElements(newOrder.map((el) => el.id));
-      }
+      // Notify parent component
+      onFormChange?.(elements);
     },
-    [addElement, elements, onElementSelected, onFormChange, clearDraggedElement, reorderElements],
+    [clearDraggedElement, addElement, moveElement, elements, reorderElements, onFormChange],
   );
 
   /**
    * Handle drag cancel event
    */
   const handleDragCancel = useCallback(() => {
+    console.log('Drag cancelled');
     clearDraggedElement();
   }, [clearDraggedElement]);
 
@@ -194,10 +204,45 @@ export function FormBuilder({
             />
           </div>
 
-          {/* Properties panel (placeholder for future tasks) */}
-          <div className="form-builder-properties w-80 bg-gray-50 border-l p-4">
-            <h3 className="text-lg font-semibold mb-4">Properties</h3>
-            <p className="text-sm text-gray-600">Property panel to be implemented in next task</p>
+          {/* Properties panel */}
+          <div className="form-builder-properties w-80 bg-white border-l">
+            <ElementPropertiesComponent
+              selectedElement={selectedElement}
+              onPropertyChange={(
+                elementId: string,
+                property: keyof ElementProperties,
+                value: unknown,
+              ) => {
+                const element = elements.find((el) => el.id.toString() === elementId);
+                if (element) {
+                  // Map property panel properties to FormElement structure
+                  switch (property) {
+                    case 'label':
+                    case 'placeholder':
+                    case 'required':
+                      // These are direct properties on FormElement
+                      updateElement(element.id, { [property]: value });
+                      break;
+                    case 'validation':
+                      // Validation is a direct property on FormElement
+                      updateElement(element.id, { validation: value as ValidationRule[] });
+                      break;
+                    case 'styling':
+                      // Styling is a direct property on FormElement
+                      updateElement(element.id, { styling: value as ElementStyling });
+                      break;
+                    case 'disabled':
+                    case 'description':
+                      // These go into the properties object
+                      updateElementProperty(element.id, property, value);
+                      break;
+                    default:
+                      // Fallback to properties object for other properties
+                      updateElementProperty(element.id, property, value);
+                  }
+                }
+              }}
+            />
           </div>
         </div>
 

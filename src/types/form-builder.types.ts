@@ -9,10 +9,11 @@ export interface FormElement {
   label: string;
   placeholder?: string;
   required?: boolean;
-  validation?: ValidationRules;
-  styling?: ElementStyling;
+  validation: ValidationRule[];
+  styling: ElementStyling;
   position: ElementPosition;
   properties?: Record<string, unknown>;
+  conditionalLogic?: Record<string, unknown>;
 }
 
 /**
@@ -44,31 +45,71 @@ export interface ElementPosition {
 }
 
 /**
- * Validation rules for form elements
+ * Validation rule types supported by the property panel
  */
-export interface ValidationRules {
-  required?: boolean;
-  minLength?: number;
-  maxLength?: number;
-  min?: number;
-  max?: number;
-  pattern?: string;
-  custom?: string;
+export type ValidationRuleType =
+  | 'required'
+  | 'minLength'
+  | 'maxLength'
+  | 'pattern'
+  | 'email'
+  | 'url'
+  | 'number'
+  | 'min'
+  | 'max'
+  | 'custom';
+
+/**
+ * Individual validation rule configuration
+ */
+export interface ValidationRule {
+  id: string;
+  type: ValidationRuleType;
+  value?: string | number;
+  message?: string;
+  enabled: boolean;
 }
 
 /**
- * Element styling configuration
+ * Styling configuration for elements
  */
 export interface ElementStyling {
+  // Layout & Spacing
+  width?: string;
+  height?: string;
+  margin?: {
+    top?: string;
+    right?: string;
+    bottom?: string;
+    left?: string;
+  };
+  padding?: {
+    top?: string;
+    right?: string;
+    bottom?: string;
+    left?: string;
+  };
+
+  // Typography
+  fontSize?: string;
+  fontWeight?: string;
+  fontFamily?: string;
+  textAlign?: 'left' | 'center' | 'right' | 'justify';
+
+  // Colors
   backgroundColor?: string;
   textColor?: string;
   borderColor?: string;
-  borderWidth?: number;
-  borderRadius?: number;
-  padding?: string;
-  margin?: string;
-  fontSize?: string;
-  fontWeight?: string;
+  focusColor?: string;
+
+  // Borders & Radius
+  borderWidth?: string;
+  borderStyle?: 'solid' | 'dashed' | 'dotted' | 'none';
+  borderRadius?: string;
+
+  // Effects
+  boxShadow?: string;
+  opacity?: number;
 }
 
 /**
