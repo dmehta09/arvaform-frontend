@@ -1,6 +1,8 @@
 'use client';
 
+import { useAutoSave } from '@/hooks/use-auto-save';
 import { useFormBuilder } from '@/hooks/use-form-builder';
+import { useUndoRedo } from '@/hooks/use-undo-redo';
 import { ElementProperties } from '@/types/element-properties.types';
 import {
   DragData,
@@ -59,6 +61,7 @@ export function FormBuilder({
   const [currentTheme, setCurrentTheme] = useState<Theme | null>(null);
 
   // Initialize form builder state
+  const formBuilderState = useFormBuilder({ formId });
   const {
     elements,
     selectedElementId,
@@ -75,7 +78,21 @@ export function FormBuilder({
     updateElementProperty,
     moveElement,
     updateElement,
-  } = useFormBuilder({ formId });
+  } = formBuilderState;
+
+  // Initialize auto-save functionality
+  const autoSave = useAutoSave(formBuilderState.state, {
+    formId,
+    interval: 30000, // 30 seconds
+    debounceMs: 1000, // 1 second
+    enabled: !isPreviewMode, // Disable auto-save in preview mode
+  });
+
+  // Initialize undo/redo functionality
+  const undoRedo = useUndoRedo(formBuilderState.state, {
+    maxHistorySize: 100,
+    enableKeyboardShortcuts: !isPreviewMode, // Disable shortcuts in preview mode
+  });
 
   // Initialize drag overlay state
   const {
@@ -90,6 +107,14 @@ export function FormBuilder({
   const selectedElement = selectedElementId
     ? elements.find((el) => el.id === selectedElementId) || null
     : null;
+
+  // Log initialization for development
+  useEffect(() => {
+    console.log('Form builder initialized with auto-save and undo/redo:', {
+      autoSaveEnabled: autoSave.isEnabled,
+      undoRedoAvailable: { canUndo: undoRedo.canUndo, canRedo: undoRedo.canRedo },
+    });
+  }, [autoSave.isEnabled, undoRedo.canUndo, undoRedo.canRedo]);
 
   /**
    * Handle drag start event
