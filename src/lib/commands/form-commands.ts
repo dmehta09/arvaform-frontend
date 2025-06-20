@@ -164,6 +164,7 @@ export class AddElementCommand extends BaseCommand {
       section: 'Section',
       heading: 'Heading',
       divider: 'Divider',
+      file: 'File Upload',
     };
     return labels[type] || 'Form Field';
   }

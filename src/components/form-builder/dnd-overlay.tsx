@@ -159,6 +159,10 @@ function createPreviewElement(elementType: FormElementType): FormElement {
       label: 'Divider',
       placeholder: 'Visual separator',
     },
+    file: {
+      label: 'File Upload',
+      placeholder: 'Choose a file to upload',
+    },
   };
 
   const config = elementConfigs[elementType] || {};

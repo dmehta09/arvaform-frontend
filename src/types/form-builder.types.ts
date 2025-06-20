@@ -14,6 +14,8 @@ export interface FormElement {
   position: ElementPosition;
   properties?: Record<string, unknown>;
   conditionalLogic?: Record<string, unknown>;
+  multiple?: boolean;
+  accept?: string;
 }
 
 /**
@@ -31,7 +33,8 @@ export type FormElementType =
   | 'checkbox'
   | 'section'
   | 'heading'
-  | 'divider';
+  | 'divider'
+  | 'file';
 
 /**
  * Element position information

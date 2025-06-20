@@ -18,7 +18,7 @@ import {
 } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import { cn } from '@/lib/utils';
-import { FormElement } from '@/types/form-builder.types';
+import { FormElement, ValidationRule } from '@/types/form-builder.types';
 import { getElementAccessibilityAttributes } from '@/utils/preview-helpers';
 import { useCallback, useState } from 'react';
 
@@ -32,6 +32,20 @@ interface ElementRendererProps {
   disabled?: boolean;
   mode?: 'view' | 'interact';
   className?: string;
+  isReadonly?: boolean;
+  style?: React.CSSProperties;
+}
+
+function isElementRequired(element: FormElement): boolean {
+  if (element.required) {
+    return true;
+  }
+  if (element.validation && Array.isArray(element.validation)) {
+    return element.validation.some(
+      (rule: ValidationRule) => rule.type === 'required' && rule.enabled,
+    );
+  }
+  return false;
 }
 
 /**
@@ -47,6 +61,8 @@ export function ElementRenderer({
   disabled = false,
   mode = 'view',
   className,
+  isReadonly = false,
+  style,
 }: ElementRendererProps) {
   const [isFocused, setIsFocused] = useState(false);
 
@@ -127,6 +143,7 @@ export function ElementRenderer({
   // Render the actual form element based on type
   const renderFormElement = () => {
     const stringValue = value ? String(value) : '';
+    const isReq = isElementRequired(element);
 
     switch (element.type) {
       case 'text':
@@ -137,6 +154,10 @@ export function ElementRenderer({
             value={stringValue}
             placeholder={element.placeholder}
             onChange={(e) => handleChange(e.target.value)}
+            required={isReq}
+            readOnly={isReadonly}
+            aria-describedby={error ? `${element.id}-error` : undefined}
+            aria-invalid={!!error}
           />
         );
 
@@ -148,6 +169,10 @@ export function ElementRenderer({
             value={stringValue}
             placeholder={element.placeholder || 'Enter your email'}
             onChange={(e) => handleChange(e.target.value)}
+            required={isReq}
+            readOnly={isReadonly}
+            aria-describedby={error ? `${element.id}-error` : undefined}
+            aria-invalid={!!error}
           />
         );
 
@@ -159,6 +184,10 @@ export function ElementRenderer({
             value={stringValue}
             placeholder={element.placeholder || 'Enter your phone number'}
             onChange={(e) => handleChange(e.target.value)}
+            required={isReq}
+            readOnly={isReadonly}
+            aria-describedby={error ? `${element.id}-error` : undefined}
+            aria-invalid={!!error}
           />
         );
 
@@ -170,6 +199,10 @@ export function ElementRenderer({
             value={stringValue}
             placeholder={element.placeholder}
             onChange={(e) => handleChange(Number(e.target.value) || 0)}
+            required={isReq}
+            readOnly={isReadonly}
+            aria-describedby={error ? `${element.id}-error` : undefined}
+            aria-invalid={!!error}
           />
         );
 
@@ -180,6 +213,10 @@ export function ElementRenderer({
             type="date"
             value={stringValue}
             onChange={(e) => handleChange(e.target.value)}
+            required={isReq}
+            readOnly={isReadonly}
+            aria-describedby={error ? `${element.id}-error` : undefined}
+            aria-invalid={!!error}
           />
         );
 
@@ -191,6 +228,10 @@ export function ElementRenderer({
             placeholder={element.placeholder}
             onChange={(e) => handleChange(e.target.value)}
             rows={(element.properties?.rows as number) || 4}
+            required={isReq}
+            readOnly={isReadonly}
+            aria-describedby={error ? `${element.id}-error` : undefined}
+            aria-invalid={!!error}
           />
         );
 
@@ -198,9 +239,10 @@ export function ElementRenderer({
         const options = (element.properties?.options as string[]) || [];
         return (
           <Select
-            disabled={disabled || mode === 'view'}
-            value={stringValue}
-            onValueChange={handleChange}>
+            onValueChange={handleChange}
+            required={isReq}
+            disabled={isReadonly || disabled || mode === 'view'}
+            value={stringValue}>
             <SelectTrigger {...getCommonProps()}>
               <SelectValue placeholder={element.placeholder || 'Select an option'} />
             </SelectTrigger>
@@ -219,10 +261,11 @@ export function ElementRenderer({
         const options = (element.properties?.options as string[]) || [];
         return (
           <RadioGroup
-            value={stringValue}
             onValueChange={handleChange}
-            disabled={disabled || mode === 'view'}
-            className="flex flex-col space-y-2">
+            required={isReq}
+            disabled={isReadonly || disabled || mode === 'view'}
+            className="flex flex-col space-y-2"
+            value={stringValue}>
             {options.map((option, index) => (
               <div key={index} className="flex items-center space-x-2">
                 <RadioGroupItem
@@ -295,6 +338,23 @@ export function ElementRenderer({
           </div>
         );
 
+      case 'file':
+        return (
+          <div className="border-2 border-dashed border-muted-foreground/25 rounded-lg p-6">
+            <input
+              type="file"
+              name={String(element.id)}
+              disabled={disabled || mode === 'view'}
+              multiple={element.multiple}
+              accept={element.accept}
+              className="w-full"
+            />
+            <p className="text-sm text-muted-foreground mt-2">
+              {element.placeholder || 'Choose file(s) to upload'}
+            </p>
+          </div>
+        );
+
       default:
         return (
           <div className="p-4 bg-gray-100 border-2 border-dashed border-gray-300 rounded-lg text-center">
@@ -311,7 +371,7 @@ export function ElementRenderer({
 
   // For input elements, render with label, input, and error
   return (
-    <div className={cn('space-y-2', className)}>
+    <div className={cn('space-y-2', className)} style={style}>
       {renderLabel()}
       {renderFormElement()}
       {renderHelpText()}

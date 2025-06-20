@@ -564,6 +564,37 @@ export const numberInputSchema: ElementPropertySchema = {
 };
 
 /**
+ * File Input Element Schema
+ */
+const fileInputSchema: ElementPropertySchema = {
+  ...textInputSchema, // Re-use general properties
+  properties: {
+    ...textInputSchema.properties,
+    multiple: {
+      type: 'boolean',
+      label: 'Allow Multiple Files',
+      description: 'Let users upload more than one file at a time.',
+      defaultValue: false,
+      section: 'general',
+    },
+    maxSize: {
+      type: 'number',
+      label: 'Max File Size (MB)',
+      description: 'Set the maximum size for each uploaded file.',
+      defaultValue: 5,
+      section: 'validation',
+    },
+    allowedTypes: {
+      type: 'text',
+      label: 'Allowed File Types (comma-separated)',
+      description: 'Specify which file types are accepted (e.g., image/png, application/pdf).',
+      defaultValue: 'image/jpeg,image/png,application/pdf',
+      section: 'validation',
+    },
+  },
+};
+
+/**
  * Registry of all element schemas
  */
 export const elementSchemas: Record<FormElementType, ElementPropertySchema> = {
@@ -580,6 +611,7 @@ export const elementSchemas: Record<FormElementType, ElementPropertySchema> = {
   section: textInputSchema, // Will extend with section-specific properties
   heading: textInputSchema, // Will extend with heading-specific properties
   divider: textInputSchema, // Will extend with divider-specific properties
+  file: fileInputSchema,
 };
 
 /**

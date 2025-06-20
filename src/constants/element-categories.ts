@@ -37,6 +37,14 @@ export const ELEMENT_CATEGORIES: ElementCategory[] = [
     order: 4,
     elements: ['divider'],
   },
+  {
+    id: 'advanced-inputs',
+    name: 'Advanced Inputs',
+    description: 'Specialized input fields for advanced use cases.',
+    icon: '🚀',
+    order: 5,
+    elements: ['file'],
+  },
 ];
 
 /**
@@ -91,6 +99,11 @@ export const CATEGORY_COLORS: Record<string, { bg: string; border: string; text:
     bg: 'bg-orange-50',
     border: 'border-orange-200',
     text: 'text-orange-700',
+  },
+  'advanced-inputs': {
+    bg: 'bg-red-50',
+    border: 'border-red-200',
+    text: 'text-red-700',
   },
 };
 

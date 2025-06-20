@@ -344,6 +344,31 @@ export const ELEMENT_CONFIGS: Record<FormElementType, ElementConfig> = {
       },
     },
   },
+  file: {
+    type: 'file',
+    name: 'File Upload',
+    description: 'Allows users to upload one or more files.',
+    icon: '📎',
+    category: 'advanced-inputs',
+    tags: ['input', 'file', 'upload', 'attachment'],
+    defaultProps: {
+      label: 'File Upload',
+      placeholder: 'Click to upload a file',
+      required: false,
+      validation: [],
+      styling: {
+        padding: { top: '16px', right: '16px', bottom: '16px', left: '16px' },
+        borderStyle: 'dashed',
+        borderWidth: '2px',
+        borderRadius: '8px',
+      },
+      properties: {
+        multiple: false,
+        maxSize: 5, // MB
+        allowedTypes: ['image/jpeg', 'image/png', 'application/pdf'],
+      },
+    },
+  },
 };
 
 /**
