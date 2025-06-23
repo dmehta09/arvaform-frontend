@@ -1,22 +1,18 @@
 /**
- * Submission Types for ArvaForm Frontend
+ * Submission Management Types - ArvaForm 2025
  *
- * These types mirror the backend submission schema and submission-related DTOs
- * for form submission handling and management.
+ * Comprehensive type definitions for form submission management
+ * following React 19 and TypeScript strict mode best practices
  */
 
 // ============================================================================
 // Core Submission Types
 // ============================================================================
 
-export type SubmissionStatus =
-  | "pending"
-  | "processing"
-  | "completed"
-  | "failed";
-export type PaymentStatus = "pending" | "completed" | "failed" | "refunded";
-export type IntegrationStatus = "pending" | "success" | "failed";
-export type DeviceType = "desktop" | "tablet" | "mobile";
+export type SubmissionStatus = 'pending' | 'processing' | 'completed' | 'failed';
+export type PaymentStatus = 'pending' | 'completed' | 'failed' | 'refunded';
+export type IntegrationStatus = 'pending' | 'success' | 'failed';
+export type DeviceType = 'desktop' | 'tablet' | 'mobile';
 
 // ============================================================================
 // File Upload Types
@@ -42,7 +38,7 @@ export interface FileUploadProgress {
   fieldId: string;
   filename: string;
   progress: number; // 0-100
-  status: "uploading" | "completed" | "error";
+  status: 'uploading' | 'completed' | 'error';
   error?: string;
 }
 
@@ -64,6 +60,15 @@ export interface SubmitterInfo {
   agreedToTerms?: boolean;
   marketingOptIn?: boolean;
   privacyPolicyAccepted?: boolean;
+
+  // IP address of submitter
+  ipAddress: string;
+
+  // User agent string
+  userAgent: string;
+
+  // Device fingerprint for security
+  deviceFingerprint?: string;
 }
 
 // ============================================================================
@@ -80,7 +85,7 @@ export interface PaymentInfo {
 
   // Payment Details
   paymentMethod?: {
-    type: "card" | "paypal" | "bank_transfer";
+    type: 'card' | 'paypal' | 'bank_transfer';
     last4?: string;
     brand?: string;
     expiryMonth?: number;
@@ -130,7 +135,7 @@ export interface ProcessingInfo {
   // Processing stages
   stages: Array<{
     name: string;
-    status: "pending" | "processing" | "completed" | "failed";
+    status: 'pending' | 'processing' | 'completed' | 'failed';
     startedAt?: string;
     completedAt?: string;
     error?: string;
@@ -156,7 +161,7 @@ export interface DigitalSignature {
 
   // Signature verification
   isVerified: boolean;
-  verificationMethod: "email" | "sms" | "document";
+  verificationMethod: 'email' | 'sms' | 'document';
   verificationData?: {
     code?: string;
     documentId?: string;
@@ -235,6 +240,18 @@ export interface SubmissionMetadata {
       height: number;
     };
   };
+
+  // Time taken to complete form (seconds)
+  submissionDuration: number;
+
+  // Operating system
+  os: string;
+
+  // Page views during form session
+  pageViews: number;
+
+  // Form version at time of submission
+  formVersion: string;
 }
 
 // ============================================================================
@@ -273,7 +290,7 @@ export interface FormSubmission {
   // Additional Information
   notes?: string; // Admin notes
   tags?: string[]; // For organization
-  priority?: "low" | "normal" | "high" | "urgent";
+  priority?: 'low' | 'normal' | 'high' | 'urgent';
 
   // Timestamps
   submittedAt: string; // ISO date string
@@ -363,13 +380,13 @@ export interface UpdateSubmissionDto {
   data?: Record<string, unknown>;
   notes?: string;
   tags?: string[];
-  priority?: "low" | "normal" | "high" | "urgent";
+  priority?: 'low' | 'normal' | 'high' | 'urgent';
   status?: SubmissionStatus;
 }
 
 export interface ProcessSubmissionDto {
   submissionId: string;
-  action: "approve" | "reject" | "retry" | "archive";
+  action: 'approve' | 'reject' | 'retry' | 'archive';
   notes?: string;
 }
 
@@ -387,7 +404,7 @@ export interface SubmissionListItem {
     isAnonymous: boolean;
   };
   status: SubmissionStatus;
-  priority?: "low" | "normal" | "high" | "urgent";
+  priority?: 'low' | 'normal' | 'high' | 'urgent';
   payment?: {
     amount: number;
     currency: string;
@@ -416,18 +433,43 @@ export interface SubmissionListResponse {
 
 export interface SubmissionFilters {
   formId?: string;
-  status?: SubmissionStatus | SubmissionStatus[];
-  priority?: "low" | "normal" | "high" | "urgent";
+  /** Filter by submission status */
+  status?: ('new' | 'read' | 'archived' | 'flagged') | ('new' | 'read' | 'archived' | 'flagged')[];
+  /** Filter by priority */
+  priority?: 'low' | 'normal' | 'high' | 'urgent';
+  /** Filter by submitter email */
   submitterEmail?: string;
+  /** Filter by payment presence */
   hasPayment?: boolean;
+  /** Filter by file attachments */
   hasFiles?: boolean;
+  /** Filter by signatures */
   hasSignatures?: boolean;
+  /** Date range start */
   dateFrom?: string;
+  /** Date range end */
   dateTo?: string;
-  search?: string; // Search in submission data
+  /** Text search across submission data */
+  search?: string;
+  /** Filter by tags */
   tags?: string[];
-  sortBy?: "submittedAt" | "processedAt" | "priority" | "status";
-  sortOrder?: "asc" | "desc";
+  /** Sort field */
+  sortBy?: 'submittedAt' | 'processedAt' | 'priority' | 'status';
+  /** Sort direction */
+  sortOrder?: 'asc' | 'desc';
+  /** Filter by email presence */
+  hasEmail?: boolean;
+  /** Filter by spam score threshold */
+  maxSpamScore?: number;
+  /** Filter by device type */
+  deviceType?: SubmissionMetadata['deviceType'][];
+  /** Date range filter */
+  dateRange?: {
+    from?: Date;
+    to?: Date;
+  };
+  /** Custom field filters */
+  customFields?: Record<string, unknown>;
 }
 
 // ============================================================================
@@ -483,7 +525,7 @@ export interface SubmissionAnalytics {
 export interface ExportSubmissionsDto {
   formId?: string;
   filters?: SubmissionFilters;
-  format: "csv" | "excel" | "json" | "pdf";
+  format: 'csv' | 'excel' | 'json' | 'pdf';
   includeFiles?: boolean;
   dateRange?: {
     start: string;
@@ -559,32 +601,32 @@ export interface SubmissionAnalyticsResponse {
 export const isFormSubmission = (obj: unknown): obj is FormSubmission => {
   return (
     obj !== null &&
-    typeof obj === "object" &&
-    typeof (obj as any).id === "string" &&
-    typeof (obj as any).formId === "string" &&
-    typeof (obj as any).status === "string" &&
+    typeof obj === 'object' &&
+    typeof (obj as any).id === 'string' &&
+    typeof (obj as any).formId === 'string' &&
+    typeof (obj as any).status === 'string' &&
     (obj as any).data &&
-    typeof (obj as any).data === "object"
+    typeof (obj as any).data === 'object'
   );
 };
 
 export const isFileUpload = (obj: unknown): obj is FileUpload => {
   return (
     obj !== null &&
-    typeof obj === "object" &&
-    typeof (obj as any).fieldId === "string" &&
-    typeof (obj as any).filename === "string" &&
-    typeof (obj as any).url === "string"
+    typeof obj === 'object' &&
+    typeof (obj as any).fieldId === 'string' &&
+    typeof (obj as any).filename === 'string' &&
+    typeof (obj as any).url === 'string'
   );
 };
 
 export const isPaymentInfo = (obj: unknown): obj is PaymentInfo => {
   return (
     obj !== null &&
-    typeof obj === "object" &&
-    typeof (obj as any).amount === "number" &&
-    typeof (obj as any).currency === "string" &&
-    typeof (obj as any).status === "string"
+    typeof obj === 'object' &&
+    typeof (obj as any).amount === 'number' &&
+    typeof (obj as any).currency === 'string' &&
+    typeof (obj as any).status === 'string'
   );
 };
 /* eslint-enable @typescript-eslint/no-explicit-any */
@@ -595,16 +637,13 @@ export const isPaymentInfo = (obj: unknown): obj is PaymentInfo => {
 
 export type SubmissionWithoutSensitiveData = Omit<
   FormSubmission,
-  "metadata.ipAddress" | "payment.paymentMethod"
+  'metadata.ipAddress' | 'payment.paymentMethod'
 >;
 export type SubmissionBasicInfo = Pick<
   FormSubmission,
-  "id" | "formId" | "status" | "submittedAt" | "submitter"
+  'id' | 'formId' | 'status' | 'submittedAt' | 'submitter'
 >;
-export type SubmissionPreview = Pick<
-  FormSubmission,
-  "id" | "data" | "submitter" | "submittedAt"
->;
+export type SubmissionPreview = Pick<FormSubmission, 'id' | 'data' | 'submitter' | 'submittedAt'>;
 
 // ============================================================================
 // Constants
@@ -614,27 +653,203 @@ export const SUBMISSION_STATUSES: Record<
   SubmissionStatus,
   { label: string; color: string; icon?: string }
 > = {
-  pending: { label: "Pending", color: "yellow" },
-  processing: { label: "Processing", color: "blue" },
-  completed: { label: "Completed", color: "green" },
-  failed: { label: "Failed", color: "red" },
+  pending: { label: 'Pending', color: 'yellow' },
+  processing: { label: 'Processing', color: 'blue' },
+  completed: { label: 'Completed', color: 'green' },
+  failed: { label: 'Failed', color: 'red' },
 };
 
-export const PAYMENT_STATUSES: Record<
-  PaymentStatus,
-  { label: string; color: string }
-> = {
-  pending: { label: "Pending", color: "yellow" },
-  completed: { label: "Completed", color: "green" },
-  failed: { label: "Failed", color: "red" },
-  refunded: { label: "Refunded", color: "gray" },
+export const PAYMENT_STATUSES: Record<PaymentStatus, { label: string; color: string }> = {
+  pending: { label: 'Pending', color: 'yellow' },
+  completed: { label: 'Completed', color: 'green' },
+  failed: { label: 'Failed', color: 'red' },
+  refunded: { label: 'Refunded', color: 'gray' },
 };
 
-export const INTEGRATION_STATUSES: Record<
-  IntegrationStatus,
-  { label: string; color: string }
-> = {
-  pending: { label: "Pending", color: "yellow" },
-  success: { label: "Success", color: "green" },
-  failed: { label: "Failed", color: "red" },
+export const INTEGRATION_STATUSES: Record<IntegrationStatus, { label: string; color: string }> = {
+  pending: { label: 'Pending', color: 'yellow' },
+  success: { label: 'Success', color: 'green' },
+  failed: { label: 'Failed', color: 'red' },
 };
+
+export interface SubmissionFile {
+  /** Unique file identifier */
+  id: string;
+  /** Original filename from user */
+  originalName: string;
+  /** Stored filename on server */
+  storedName: string;
+  /** File size in bytes */
+  size: number;
+  /** MIME type of the file */
+  mimeType: string;
+  /** Secure download URL */
+  url: string;
+  /** Upload timestamp */
+  uploadedAt: Date;
+}
+
+export interface Submission {
+  /** Unique submission identifier */
+  id: string;
+  /** Associated form ID */
+  formId: string;
+  /** Submission timestamp */
+  submittedAt: Date;
+  /** Last modified timestamp */
+  updatedAt: Date;
+  /** Submitter information */
+  submitterInfo: SubmitterInfo;
+  /** Current submission status */
+  status: 'new' | 'read' | 'archived' | 'flagged';
+  /** Form field data (key-value pairs) */
+  data: Record<string, unknown>;
+  /** Attached files */
+  files?: SubmissionFile[];
+  /** Additional metadata */
+  metadata: SubmissionMetadata;
+  /** Admin notes */
+  notes?: string;
+  /** Spam score (0-100) */
+  spamScore?: number;
+  /** GDPR compliance flags */
+  gdprConsent?: boolean;
+  /** Marketing consent */
+  marketingConsent?: boolean;
+}
+
+export interface SubmissionListResponse {
+  /** Array of submissions */
+  data: Submission[];
+  /** Pagination metadata */
+  pagination: {
+    page: number;
+    limit: number;
+    total: number;
+    totalPages: number;
+    hasNext: boolean;
+    hasPrev: boolean;
+  };
+  /** Filter summary */
+  filters: {
+    appliedFilters: Record<string, unknown>;
+    totalFiltered: number;
+    totalUnfiltered: number;
+  };
+  /** Sorting information */
+  sorting: {
+    field: string;
+    direction: 'asc' | 'desc';
+  };
+}
+
+export interface SubmissionSorting {
+  /** Field to sort by */
+  field: keyof Submission | 'submitterInfo.email' | 'metadata.deviceType';
+  /** Sort direction */
+  direction: 'asc' | 'desc';
+}
+
+export interface SubmissionQueryParams {
+  /** Current page number */
+  page?: number;
+  /** Items per page */
+  limit?: number;
+  /** Applied filters */
+  filters?: SubmissionFilters;
+  /** Sorting configuration */
+  sorting?: SubmissionSorting;
+}
+
+export interface BulkActionRequest {
+  /** Array of submission IDs */
+  submissionIds: string[];
+  /** Action to perform */
+  action: 'delete' | 'markAsRead' | 'markAsNew' | 'archive' | 'flag';
+  /** Optional reason/note */
+  reason?: string;
+}
+
+export interface BulkActionResponse {
+  /** Number of successfully processed items */
+  success: number;
+  /** Number of failed items */
+  failed: number;
+  /** Error details for failed items */
+  errors?: Array<{
+    submissionId: string;
+    error: string;
+  }>;
+  /** Updated submission IDs */
+  updatedIds: string[];
+}
+
+export interface SubmissionStats {
+  /** Total submissions count */
+  total: number;
+  /** Count by status */
+  byStatus: Record<Submission['status'], number>;
+  /** Submissions today */
+  today: number;
+  /** Submissions this week */
+  thisWeek: number;
+  /** Submissions this month */
+  thisMonth: number;
+  /** Average spam score */
+  avgSpamScore: number;
+  /** Top device types */
+  topDeviceTypes: Array<{
+    type: SubmissionMetadata['deviceType'];
+    count: number;
+    percentage: number;
+  }>;
+}
+
+// React 19 useActionState types
+export interface SubmissionActionState {
+  /** Current operation status */
+  status: 'idle' | 'pending' | 'success' | 'error';
+  /** Success message */
+  message?: string;
+  /** Error details */
+  error?: string;
+  /** Last updated timestamp */
+  lastUpdated?: Date;
+  /** Optimistic data for immediate UI updates */
+  optimisticData?: Partial<Submission>[];
+}
+
+// Table column configuration
+export interface SubmissionTableColumn {
+  /** Column key */
+  key: keyof Submission | string;
+  /** Display label */
+  label: string;
+  /** Is sortable */
+  sortable?: boolean;
+  /** Is filterable */
+  filterable?: boolean;
+  /** Column width */
+  width?: number;
+  /** Is column visible by default */
+  visible?: boolean;
+  /** Custom cell renderer */
+  render?: (submission: Submission) => React.ReactNode;
+}
+
+// Export configuration for integration with E3-T007
+export interface ExportConfig {
+  /** Export format */
+  format: 'csv' | 'excel' | 'json';
+  /** Columns to include */
+  columns?: string[];
+  /** Apply current filters */
+  applyFilters?: boolean;
+  /** Date range for export */
+  dateRange?: {
+    from: Date;
+    to: Date;
+  };
+  /** Include file attachments */
+  includeFiles?: boolean;
+}
