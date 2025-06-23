@@ -12,6 +12,7 @@
  * - Theme toggle
  * - Preview mode switch
  * - Form settings access
+ * - Form sharing functionality
  */
 
 'use client';
@@ -30,6 +31,7 @@ import {
   Palette,
   RotateCcw,
   Settings,
+  Share2,
   Smartphone,
   Tablet,
   ZoomIn,
@@ -66,6 +68,8 @@ export interface FormBuilderHeaderProps {
   onThemeToggle: () => void;
   /** Settings panel toggle handler */
   onSettingsToggle?: () => void;
+  /** Sharing panel toggle handler */
+  onSharingToggle?: () => void;
   /** Custom class name */
   className?: string;
 }
@@ -89,6 +93,7 @@ export function FormBuilderHeader({
   isThemePanelOpen,
   onThemeToggle,
   onSettingsToggle,
+  onSharingToggle,
   className,
 }: FormBuilderHeaderProps) {
   const handleZoomIn = () => {
@@ -213,9 +218,20 @@ export function FormBuilderHeader({
           </TooltipProvider>
         </div>
 
-        {/* Right Section - Preview & Settings */}
+        {/* Right Section - Actions */}
         <div className="flex items-center gap-2">
           <TooltipProvider>
+            {/* Sharing Button */}
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button variant="outline" size="sm" onClick={onSharingToggle} className="h-8 gap-2">
+                  <Share2 className="h-4 w-4" />
+                  Share
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>Share Form</TooltipContent>
+            </Tooltip>
+
             {/* Preview Toggle */}
             <Tooltip>
               <TooltipTrigger asChild>
@@ -223,23 +239,11 @@ export function FormBuilderHeader({
                   variant={isPreviewMode ? 'default' : 'outline'}
                   size="sm"
                   onClick={onPreviewToggle}
-                  className="flex items-center gap-2">
-                  {isPreviewMode ? (
-                    <>
-                      <RotateCcw className="h-4 w-4" />
-                      <span>Back to Editor</span>
-                    </>
-                  ) : (
-                    <>
-                      <Eye className="h-4 w-4" />
-                      <span>Preview</span>
-                    </>
-                  )}
+                  className="h-8 w-8 p-0">
+                  <Eye className="h-4 w-4" />
                 </Button>
               </TooltipTrigger>
-              <TooltipContent>
-                {isPreviewMode ? 'Return to Builder' : 'Preview Form'}
-              </TooltipContent>
+              <TooltipContent>{isPreviewMode ? 'Exit Preview' : 'Preview Form'}</TooltipContent>
             </Tooltip>
 
             {/* Settings */}

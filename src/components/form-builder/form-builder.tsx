@@ -13,6 +13,7 @@ import {
   FormElementType,
   ValidationRule,
 } from '@/types/form-builder.types';
+import { Form } from '@/types/form.types';
 import type { Theme } from '@/types/theme.types';
 import { DragEndEvent, DragStartEvent } from '@dnd-kit/core';
 import { arrayMove } from '@dnd-kit/sortable';
@@ -23,8 +24,10 @@ import { FormBuilderDndContext } from './dnd-context';
 import { FormBuilderDragOverlay, useDragOverlay } from './dnd-overlay';
 import { ElementLibrary } from './element-library';
 import { ElementProperties as ElementPropertiesComponent } from './element-properties';
+import { FormBuilderHeader } from './form-builder-header';
 import { FormCanvas } from './form-canvas';
 import { FormPreview } from './form-preview';
+import { SharingPanel } from './sharing-panel';
 import { ThemePanel } from './theme-panel';
 
 /**
@@ -41,7 +44,7 @@ interface FormBuilderProps {
 /**
  * Main FormBuilder component that provides the complete drag-and-drop
  * form building experience. Integrates DnD context, canvas, and state management.
- * Now supports preview mode for testing forms.
+ * Now supports preview mode for testing forms and sharing functionality.
  */
 export function FormBuilder({
   formId,
@@ -59,6 +62,9 @@ export function FormBuilder({
   // Theme panel state
   const [isThemePanelOpen, setIsThemePanelOpen] = useState(false);
   const [currentTheme, setCurrentTheme] = useState<Theme | null>(null);
+
+  // Sharing panel state
+  const [isSharingPanelOpen, setIsSharingPanelOpen] = useState(false);
 
   // Initialize form builder state
   const formBuilderState = useFormBuilder({ formId });
@@ -215,6 +221,21 @@ export function FormBuilder({
     setCurrentTheme(theme);
   }, []);
 
+  /**
+   * Handle sharing panel toggle
+   */
+  const handleSharingToggle = useCallback(() => {
+    setIsSharingPanelOpen((prev) => !prev);
+  }, []);
+
+  /**
+   * Handle preview mode toggle
+   */
+  const handlePreviewToggle = useCallback(() => {
+    // This would be connected to parent component state
+    console.log('Preview mode toggle requested');
+  }, []);
+
   // Effect to inject theme variables into the document head
   useEffect(() => {
     if (!currentTheme) return;
@@ -250,6 +271,68 @@ export function FormBuilder({
     styleTag.innerHTML = generateCssVariables(currentTheme);
   }, [currentTheme]);
 
+  // Mock form data for sharing (replace with actual form data)
+  const mockForm: Form = {
+    id: formId,
+    title: 'Contact Form',
+    slug: 'contact-form',
+    isPublished: true,
+    description: 'Get in touch with us using this simple contact form.',
+
+    // Required fields with mock data
+    createdBy: 'user-123',
+    organizationId: 'org-456',
+    pages: [],
+    elements: [],
+    settings: {
+      submitButton: {
+        text: 'Submit',
+        color: '#ffffff',
+        backgroundColor: '#007bff',
+        position: 'center',
+        size: 'medium',
+      },
+      allowMultipleSubmissions: false,
+      requireLogin: false,
+      saveProgress: true,
+      showProgressBar: true,
+      showThankYouPage: true,
+      thankYouMessage: 'Thank you for your submission!',
+      notifications: {
+        email: { enabled: false, recipients: [] },
+        webhook: { enabled: false },
+        slack: { enabled: false },
+      },
+      integrations: {},
+      captcha: { enabled: false, type: 'recaptcha' },
+      dataRetention: { enabled: false },
+      submissionLimits: { enabled: false, limitType: 'total' },
+    },
+    conditionalRules: [],
+    accessControl: {
+      type: 'public',
+    },
+    analytics: {
+      views: 0,
+      submissions: 0,
+      conversionRate: 0,
+      averageCompletionTime: 0,
+      viewsByDay: [],
+      submissionsByDay: [],
+      elementInteractions: {},
+      pageViews: {},
+      dropoffPoints: [],
+    },
+    seo: {
+      metaTitle: 'Contact Form',
+      metaDescription: 'Get in touch with us using this simple contact form.',
+    },
+    status: 'published',
+    version: 1,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  };
+
   // Render preview mode
   if (isPreviewMode) {
     return (
@@ -270,28 +353,39 @@ export function FormBuilder({
     );
   }
 
-  // Render builder mode
+  // Render builder mode with modern layout
   return (
-    <div className={`form-builder ${className}`}>
-      <FormBuilderDndContext
-        onDragStart={handleDragStart}
-        onDragEnd={handleDragEnd}
-        onDragCancel={handleDragCancel}
-        onFormBuilderEvent={handleFormBuilderEvent}>
-        <div className="form-builder-layout flex h-full">
+    <div className={`h-screen flex flex-col bg-background ${className}`}>
+      {/* Header with sharing functionality */}
+      <FormBuilderHeader
+        formName="Contact Form"
+        autoSave={autoSave}
+        undoRedo={undoRedo}
+        zoom={zoom}
+        onZoomChange={setZoom}
+        showGrid={showGrid}
+        onGridToggle={toggleGrid}
+        isPreviewMode={isPreviewMode}
+        onPreviewToggle={handlePreviewToggle}
+        isThemePanelOpen={isThemePanelOpen}
+        onThemeToggle={handleThemeToggle}
+        onSharingToggle={handleSharingToggle}
+      />
+
+      {/* Main Content */}
+      <div className="flex-1 flex overflow-hidden">
+        <FormBuilderDndContext
+          onDragStart={handleDragStart}
+          onDragEnd={handleDragEnd}
+          onDragCancel={handleDragCancel}
+          onFormBuilderEvent={handleFormBuilderEvent}>
           {/* Element Library Sidebar */}
           <div className="form-builder-sidebar w-80 bg-gray-50 border-r">
-            <ElementLibrary
-            // onElementClick={(elementType) => console.log('Element clicked:', elementType)}
-            // onElementDoubleClick={(elementType) => {
-            //   // Double-click to instantly add element to canvas
-            //   console.log('Element double-clicked, adding to canvas:', elementType);
-            // }}
-            />
+            <ElementLibrary />
           </div>
 
           {/* Main canvas area */}
-          <div className="form-builder-canvas flex-1">
+          <div className="form-builder-canvas flex-1 flex flex-col">
             {/* Canvas toolbar */}
             <div className="canvas-toolbar bg-white border-b px-4 py-2 flex items-center justify-between">
               <div className="flex items-center gap-2">
@@ -318,28 +412,31 @@ export function FormBuilder({
               </div>
             </div>
 
-            <FormCanvas
-              elements={elements}
-              selectedElementId={selectedElementId}
-              canvasSize={{
-                width: 800,
-                height: 1200,
-                minWidth: 400,
-                minHeight: 600,
-                maxWidth: 1200,
-                maxHeight: 2400,
-              }}
-              zoom={zoom}
-              showGrid={showGrid}
-              gridSize={20}
-              className="h-full"
-              onElementSelect={selectElement}
-              onElementDelete={deleteElement}
-              onElementDuplicate={duplicateElement}
-              onCanvasClick={deselectElement}
-              onZoomChange={setZoom}
-              onGridToggle={toggleGrid}
-            />
+            {/* Canvas */}
+            <div className="flex-1">
+              <FormCanvas
+                elements={elements}
+                selectedElementId={selectedElementId}
+                canvasSize={{
+                  width: 800,
+                  height: 1200,
+                  minWidth: 400,
+                  minHeight: 600,
+                  maxWidth: 1200,
+                  maxHeight: 2400,
+                }}
+                zoom={zoom}
+                showGrid={showGrid}
+                gridSize={20}
+                className="h-full"
+                onElementSelect={selectElement}
+                onElementDelete={deleteElement}
+                onElementDuplicate={duplicateElement}
+                onCanvasClick={deselectElement}
+                onZoomChange={setZoom}
+                onGridToggle={toggleGrid}
+              />
+            </div>
           </div>
 
           {/* Properties panel */}
@@ -391,15 +488,24 @@ export function FormBuilder({
               />
             )}
           </div>
-        </div>
 
-        {/* Drag Overlay for visual feedback during drag operations */}
-        <FormBuilderDragOverlay
-          activeElement={activeElement}
-          activeElementType={activeElementType}
-          activeSource={activeSource}
-        />
-      </FormBuilderDndContext>
+          {/* Drag Overlay for visual feedback during drag operations */}
+          <FormBuilderDragOverlay
+            activeElement={activeElement}
+            activeElementType={activeElementType}
+            activeSource={activeSource}
+          />
+        </FormBuilderDndContext>
+      </div>
+
+      {/* Sharing Panel */}
+      <SharingPanel
+        form={mockForm as Form}
+        isOpen={isSharingPanelOpen}
+        onClose={() => setIsSharingPanelOpen(false)}
+        customDomain="forms.example.com"
+        trackingCampaign="form-builder-2025"
+      />
 
       {/* Debug panel for development */}
       {process.env.NODE_ENV === 'development' && <DndDebugPanel />}
