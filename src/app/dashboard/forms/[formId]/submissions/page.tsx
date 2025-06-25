@@ -272,6 +272,7 @@ export default async function SubmissionsPage({ params, searchParams }: Submissi
             <Suspense fallback={<SubmissionTableSkeleton />}>
               <SubmissionsDashboard
                 formId={formId}
+                formTitle={form?.title || 'Unknown Form'}
                 initialData={initialSubmissions}
                 initialParams={queryParams}
               />

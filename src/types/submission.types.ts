@@ -837,12 +837,73 @@ export interface SubmissionTableColumn {
   render?: (submission: Submission) => React.ReactNode;
 }
 
-// Export configuration for integration with E3-T007
+// ============================================================================
+// Export Management Types - Enhanced
+// ============================================================================
+
+export type ExportFormat = 'csv' | 'excel' | 'json';
+
+export interface ExportTemplate {
+  name: string;
+  description: string;
+  fields: string[];
+  filters: Record<string, unknown>;
+}
+
+export interface ExportOptions {
+  format: ExportFormat;
+  fields?: string[];
+  filters?: {
+    status?: string[];
+    submitterEmail?: string;
+    dateRange?: {
+      start: string;
+      end: string;
+    };
+    submissionIds?: string[];
+    minSpamScore?: number;
+    gdprCompliant?: boolean;
+  };
+  includeFiles?: boolean;
+  filename?: string;
+  compression?: 'none' | 'zip' | 'gzip';
+  maxRecords?: number;
+  emailTo?: string;
+  template?: ExportTemplate;
+  schedule?: string;
+  async?: boolean;
+}
+
+export interface ExportProgress {
+  status: 'pending' | 'processing' | 'completed' | 'failed';
+  progress: number; // 0-100
+  message?: string;
+  startTime?: Date;
+  processedRecords?: number;
+  totalRecords?: number;
+  downloadUrl?: string;
+  error?: string;
+}
+
+export interface ExportJob {
+  jobId: string;
+  status: 'pending' | 'processing' | 'completed' | 'failed';
+  progress: number;
+  downloadUrl?: string;
+  filename?: string;
+  fileSize?: number;
+  totalRecords?: number;
+  expiresAt?: string;
+  error?: string;
+  createdAt: string;
+  completedAt?: string;
+}
+
 export interface ExportConfig {
   /** Export format */
-  format: 'csv' | 'excel' | 'json';
+  format: ExportFormat;
   /** Columns to include */
-  columns?: string[];
+  columns: string[];
   /** Apply current filters */
   applyFilters?: boolean;
   /** Date range for export */
@@ -852,4 +913,6 @@ export interface ExportConfig {
   };
   /** Include file attachments */
   includeFiles?: boolean;
+  /** Custom filename */
+  customFilename?: string;
 }

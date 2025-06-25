@@ -19,12 +19,14 @@ import type {
   SubmissionListResponse,
   SubmissionQueryParams,
 } from '@/types/submission.types';
-import { Download, Filter, RefreshCw } from 'lucide-react';
+import { Filter, RefreshCw } from 'lucide-react';
 import { useState, useTransition } from 'react';
 
 interface SubmissionsDashboardProps {
   /** Form ID */
   formId: string;
+  /** Form title for display */
+  formTitle: string;
   /** Initial data from server */
   initialData: SubmissionListResponse;
   /** Initial query parameters */
@@ -36,6 +38,7 @@ interface SubmissionsDashboardProps {
  */
 export function SubmissionsDashboard({
   formId,
+  formTitle,
   initialData: _initialData,
   initialParams,
 }: SubmissionsDashboardProps) {
@@ -74,18 +77,6 @@ export function SubmissionsDashboard({
   // Handle submission view
   const handleViewSubmission = (submission: Submission) => {
     setSelectedSubmission(submission);
-  };
-
-  // Handle export (integration point for E3-T007)
-  const handleExport = async (format: 'csv' | 'excel' | 'json') => {
-    startTransition(async () => {
-      try {
-        // This will be implemented in E3-T007
-        console.log('Export submissions:', { format, filters, selectedIds });
-      } catch (error) {
-        console.error('Export failed:', error);
-      }
-    });
   };
 
   // Handle bulk actions with optimistic updates
@@ -137,6 +128,9 @@ export function SubmissionsDashboard({
   // Get display data (optimistic or actual)
   const displaySubmissions = optimisticSubmissions.length > 0 ? optimisticSubmissions : submissions;
 
+  // Convert filters to Record<string, unknown> for export
+  const currentFiltersForExport = filters as Record<string, unknown>;
+
   if (error) {
     return (
       <Card>
@@ -172,26 +166,6 @@ export function SubmissionsDashboard({
             Refresh
           </Button>
         </div>
-
-        <div className="flex items-center gap-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => handleExport('csv')}
-            disabled={isPending}>
-            <Download className="h-4 w-4 mr-2" />
-            Export CSV
-          </Button>
-
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => handleExport('excel')}
-            disabled={isPending}>
-            <Download className="h-4 w-4 mr-2" />
-            Export Excel
-          </Button>
-        </div>
       </div>
 
       {/* Filters Panel */}
@@ -212,7 +186,7 @@ export function SubmissionsDashboard({
         </Card>
       )}
 
-      {/* Table Toolbar */}
+      {/* Table Toolbar with Export */}
       <SubmissionTableToolbar
         selectedCount={selectedIds.length}
         totalCount={pagination.total}
@@ -221,6 +195,10 @@ export function SubmissionsDashboard({
         onClearSelection={clearSelection}
         actionState={actionState}
         isPending={isPending}
+        formId={formId}
+        formTitle={formTitle}
+        selectedSubmissions={undefined}
+        currentFilters={currentFiltersForExport}
       />
 
       {/* Main Table */}

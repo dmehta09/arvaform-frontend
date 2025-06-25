@@ -13,21 +13,22 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { Progress } from '@/components/ui/progress';
-import type { SubmissionActionState } from '@/types/submission.types';
+import type { SubmissionActionState, SubmissionListItem } from '@/types/submission.types';
 import {
   Archive,
   CheckCircle,
   ChevronDown,
+  Download,
   Flag,
   Loader2,
   SquareCheck,
   Trash2,
   X,
 } from 'lucide-react';
+import { useState } from 'react';
+import { ExportModal } from './export-modal';
 
 interface SubmissionTableToolbarProps {
   /** Number of selected submissions */
@@ -44,6 +45,14 @@ interface SubmissionTableToolbarProps {
   actionState: SubmissionActionState;
   /** Is operation pending */
   isPending: boolean;
+  /** Form ID for export */
+  formId: string;
+  /** Form title for export */
+  formTitle: string;
+  /** Selected submissions for export */
+  selectedSubmissions?: SubmissionListItem[];
+  /** Current filters applied */
+  currentFilters?: Record<string, unknown>;
 }
 
 /**
@@ -130,7 +139,14 @@ export function SubmissionTableToolbar({
   onClearSelection,
   actionState,
   isPending,
+  formId,
+  formTitle,
+  selectedSubmissions,
+  currentFilters,
 }: SubmissionTableToolbarProps) {
+  // Export modal state
+  const [isExportModalOpen, setIsExportModalOpen] = useState(false);
+
   // Handle bulk action execution
   const handleBulkAction = (action: string) => {
     if (BULK_ACTIONS[action as keyof typeof BULK_ACTIONS]?.requiresConfirmation) {
@@ -175,87 +191,94 @@ export function SubmissionTableToolbar({
           )}
         </div>
 
-        {/* Bulk Actions */}
-        {selectedCount > 0 && (
-          <div className="flex items-center gap-2">
-            {/* Quick Actions */}
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => handleBulkAction('markAsRead')}
-              disabled={isPending}>
-              <CheckCircle className="h-3 w-3 mr-1" />
-              Mark Read
-            </Button>
+        {/* Action Buttons */}
+        <div className="flex items-center gap-2">
+          {/* Export Button */}
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setIsExportModalOpen(true)}
+            disabled={isPending || totalCount === 0}
+            className="flex items-center gap-2">
+            <Download className="h-3 w-3" />
+            Export
+            {selectedCount > 0 && (
+              <Badge variant="secondary" className="ml-1 text-xs">
+                {selectedCount}
+              </Badge>
+            )}
+          </Button>
 
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => handleBulkAction('archive')}
-              disabled={isPending}>
-              <Archive className="h-3 w-3 mr-1" />
-              Archive
-            </Button>
+          {/* Bulk Actions - only show when selections are made */}
+          {selectedCount > 0 && (
+            <>
+              {/* Quick Actions */}
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => handleBulkAction('markAsRead')}
+                disabled={isPending}>
+                <CheckCircle className="h-3 w-3 mr-1" />
+                Mark Read
+              </Button>
 
-            {/* More Actions Dropdown */}
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="outline" size="sm" disabled={isPending}>
-                  More
-                  <ChevronDown className="h-3 w-3 ml-1" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-56">
-                {Object.entries(BULK_ACTIONS).map(([key, action]) => {
-                  const Icon = action.icon;
-                  return (
-                    <DropdownMenuItem
-                      key={key}
-                      onClick={() => handleBulkAction(key)}
-                      className={
-                        action.variant === 'destructive' ? 'text-red-600 focus:text-red-600' : ''
-                      }>
-                      <Icon className="h-4 w-4 mr-2" />
-                      <div>
-                        <div className="font-medium">{action.label}</div>
-                        <div className="text-xs text-muted-foreground">{action.description}</div>
-                      </div>
-                    </DropdownMenuItem>
-                  );
-                })}
-                <DropdownMenuSeparator />
-                <DropdownMenuItem
-                  onClick={() => handleBulkAction('delete')}
-                  className="text-red-600 focus:text-red-600">
-                  <Trash2 className="h-4 w-4 mr-2" />
-                  <div>
-                    <div className="font-medium">Delete</div>
-                    <div className="text-xs text-muted-foreground">
-                      Permanently remove submissions
-                    </div>
-                  </div>
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </div>
-        )}
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => handleBulkAction('archive')}
+                disabled={isPending}>
+                <Archive className="h-3 w-3 mr-1" />
+                Archive
+              </Button>
+
+              {/* More Actions Dropdown */}
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline" size="sm" disabled={isPending}>
+                    More
+                    <ChevronDown className="h-3 w-3 ml-1" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-48">
+                  {Object.entries(BULK_ACTIONS)
+                    .filter(([key]) => !['markAsRead', 'archive'].includes(key))
+                    .map(([key, action]) => {
+                      const Icon = action.icon;
+                      return (
+                        <DropdownMenuItem
+                          key={key}
+                          onClick={() => handleBulkAction(key)}
+                          disabled={isPending}
+                          className={
+                            action.variant === 'destructive'
+                              ? 'text-red-600 focus:text-red-600'
+                              : ''
+                          }>
+                          <Icon className="h-4 w-4 mr-2" />
+                          {action.label}
+                        </DropdownMenuItem>
+                      );
+                    })}
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </>
+          )}
+        </div>
       </div>
 
       {/* Action Status */}
       <ActionStatusIndicator actionState={actionState} />
 
-      {/* Progress Bar (if pending) */}
-      {isPending && selectedCount > 0 && (
-        <div className="space-y-2">
-          <div className="flex items-center justify-between text-sm">
-            <span>
-              Processing {selectedCount} submission{selectedCount !== 1 ? 's' : ''}...
-            </span>
-            <span>Please wait</span>
-          </div>
-          <Progress value={undefined} className="h-2" />
-        </div>
-      )}
+      {/* Export Modal */}
+      <ExportModal
+        isOpen={isExportModalOpen}
+        onClose={() => setIsExportModalOpen(false)}
+        formId={formId}
+        formTitle={formTitle}
+        totalSubmissions={totalCount}
+        selectedSubmissions={selectedSubmissions}
+        currentFilters={currentFilters}
+      />
     </div>
   );
 }
